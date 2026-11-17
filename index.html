@@ -736,6 +736,225 @@
   }
 
   /* =========================================================
+     📱 手機友善版：橫屏 (Landscape) 零重疊與視野最大化精簡佈局
+     ========================================================= */
+  @media (orientation: landscape) {
+    body.mobile-mode #minimapContainer {
+      top: 6px;
+      left: 6px;
+      width: 82px;
+      padding: 3px;
+    }
+    body.mobile-mode #minimapContainer .minimap-header {
+      font-size: 9px;
+      margin-bottom: 2px;
+    }
+    body.mobile-mode #minimapContainer .minimap-controls {
+      margin-top: 2px;
+    }
+    body.mobile-mode #minimapContainer .minimap-controls .pixel-btn {
+      padding: 1px 4px !important;
+      font-size: 9px !important;
+    }
+    body.mobile-mode #camZoomLabel {
+      font-size: 8px;
+    }
+
+    /* 角色狀態卡緊貼小地圖右側並排，徹底避開左下角搖桿 */
+    body.mobile-mode #statusHud {
+      top: 6px;
+      left: 92px;
+      bottom: auto;
+      width: 158px;
+      padding: 4px 6px;
+    }
+    body.mobile-mode #statusHud > div:first-child {
+      font-size: 10px !important;
+      margin-bottom: 3px !important;
+    }
+    body.mobile-mode #statusHud .bar-group {
+      margin-bottom: 3px;
+    }
+    body.mobile-mode #statusHud .bar-label {
+      font-size: 9px;
+      margin-bottom: 1px;
+    }
+    body.mobile-mode #statusHud .bar-track {
+      height: 7px;
+    }
+    body.mobile-mode #statusHud .dual-survival {
+      gap: 4px;
+      margin-top: 2px;
+    }
+    body.mobile-mode #statusHud .dual-survival .bar-track {
+      height: 6px;
+    }
+    body.mobile-mode #statusHud > div:last-child {
+      margin-top: 3px !important;
+    }
+    body.mobile-mode #xpText {
+      display: none;
+    }
+
+    /* 右上角導航與存檔合併為單行緊湊工具列 */
+    body.mobile-mode #rightHud {
+      top: 6px;
+      right: 6px;
+      width: calc(100vw - 260px);
+      max-width: 480px;
+      gap: 3px;
+    }
+    body.mobile-mode #rightHud > .pixel-box:first-child {
+      display: grid;
+      grid-template-columns: 4fr 2fr;
+      gap: 3px;
+      padding: 3px 4px;
+    }
+    body.mobile-mode .top-nav-btns {
+      gap: 2px;
+    }
+    body.mobile-mode .top-nav-btns .pixel-btn {
+      padding: 4px 2px;
+      font-size: 10px;
+      white-space: nowrap;
+    }
+    body.mobile-mode .save-quick-row {
+      margin-top: 0;
+      gap: 2px;
+    }
+    body.mobile-mode .save-quick-row .pixel-btn {
+      padding: 4px 2px;
+      font-size: 10px !important;
+      white-space: nowrap;
+    }
+
+    /* 任務追蹤條精簡為超薄雙行 */
+    body.mobile-mode #questTracker {
+      padding: 4px 7px;
+      font-size: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2px 6px;
+    }
+    body.mobile-mode #questTracker .quest-title-tag {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+      max-width: 68%;
+      font-size: 10px;
+    }
+    body.mobile-mode #trackerProgress {
+      margin-top: 0;
+      font-size: 10px;
+      order: 3;
+    }
+    body.mobile-mode #trackerFooter {
+      margin-top: 0 !important;
+      gap: 6px;
+      order: 2;
+    }
+    body.mobile-mode #coresDisplay {
+      font-size: 9px !important;
+    }
+
+    /* 底部中央 4 格補給欄貼齊螢幕最下方，位於左右操作區之間 */
+    body.mobile-mode #bottomCenterHud {
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    body.mobile-mode .hot-slot {
+      width: 36px;
+      height: 36px;
+    }
+
+    /* 左下角搖桿與慢速微操並排於底部 */
+    body.mobile-mode .mobile-stick-zone {
+      bottom: 10px;
+      left: 12px;
+      width: 102px;
+      height: 102px;
+    }
+    body.mobile-mode .mobile-stick-knob {
+      width: 38px;
+      height: 38px;
+    }
+    body.mobile-mode .mobile-slow-btn {
+      bottom: 12px;
+      left: 120px;
+      padding: 6px 8px;
+      font-size: 10px;
+    }
+
+    /* 右下角拇指技能鍵盤貼齊右下角 */
+    body.mobile-mode .mobile-action-cluster {
+      bottom: 10px;
+      right: 10px;
+      grid-template-columns: repeat(3, 46px);
+      gap: 5px;
+    }
+    body.mobile-mode .m-btn {
+      width: 46px;
+      height: 46px;
+      font-size: 10px;
+    }
+
+    body.mobile-mode #toastContainer {
+      top: 118px;
+      left: 6px;
+      max-width: 245px;
+    }
+
+    /* 手機橫屏戰鬥介面緊湊自適應，確保底部按鈕完整可見 */
+    body.mobile-mode #battleOverlay {
+      padding: 6px 12px;
+    }
+    body.mobile-mode .battle-enemy-header {
+      margin-bottom: 2px;
+    }
+    body.mobile-mode .battle-enemy-name {
+      font-size: 14px;
+    }
+    body.mobile-mode .battle-enemy-hp-wrap {
+      height: 10px;
+      margin-bottom: 2px;
+    }
+    body.mobile-mode #btlEnemyHpText {
+      font-size: 10px !important;
+      margin-bottom: 2px !important;
+    }
+    body.mobile-mode #btlEnemyCanvas {
+      width: 68px;
+      height: 68px;
+    }
+    body.mobile-mode .ut-speech-bubble {
+      padding: 5px 10px;
+      font-size: 11px;
+      max-width: 320px;
+    }
+    body.mobile-mode #utTextBox {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+    body.mobile-mode .ut-choice-btn {
+      padding: 5px 8px;
+      font-size: 12px;
+    }
+    body.mobile-mode .battle-bottom-bar {
+      gap: 4px;
+    }
+    body.mobile-mode .battle-player-stats {
+      font-size: 12px;
+    }
+    body.mobile-mode .ut-main-btn {
+      padding: 6px 4px;
+      font-size: 12px;
+    }
+  }
+
+  /* =========================================================
      UNDERTALE × 元氣騎士 回合制彈幕戰鬥系統
      ========================================================= */
   #battleOverlay {
@@ -1190,7 +1409,7 @@
     <div class="quest-title-tag" id="trackerTitle">📌 當前主線任務</div>
     <div id="trackerDesc" style="color:#cbd5e1;">載入中...</div>
     <div id="trackerProgress" style="color:#4ade80; margin-top:4px; font-weight:bold;"></div>
-    <div style="margin-top:5px; display:flex; justify-content:space-between; align-items:center;">
+    <div id="trackerFooter" style="margin-top:5px; display:flex; justify-content:space-between; align-items:center;">
       <span id="coresDisplay" style="font-size:10px; color:#94a3b8;">核心: 🌸❌ ☀️❌ 🍁❌ ❄️❌</span>
       <button class="pixel-btn" style="padding:2px 6px; font-size:10px;" onclick="toggleCompass()">🧭指引</button>
     </div>
@@ -2218,12 +2437,7 @@ function setDeviceMode(mode) {
   document.body.classList.toggle('mobile-ui-active', isMobile);
   document.getElementById('mobileControlsLayer').style.display = (isMobile && STATE.started) ? 'block' : 'none';
 
-  // 手機版自動縮小雷達小地圖畫布尺寸，電腦版還原為 150x150
-  const mc = document.getElementById('minimapCanvas');
-  if (mc) {
-    mc.width = isMobile ? 96 : 150;
-    mc.height = isMobile ? 96 : 150;
-  }
+  syncMobileMinimapCanvas();
 
   // 同步標題畫面與設置面板按鈕狀態
   document.getElementById('devicePcBtn').classList.toggle('active', !isMobile);
@@ -2233,7 +2447,23 @@ function setDeviceMode(mode) {
 
   AUDIO.play('blip');
   if (STATE.started) {
-    addToast(isMobile ? '📱 已切換至【手機友善版】：精簡介面與虛擬按鍵已就緒！' : '💻 已切換至【電腦版】：使用鍵盤 WASD 與滑鼠操作。');
+    addToast(isMobile ? '📱 已切換至【手機友善版】：橫/直屏精簡介面與虛擬按鍵已就緒！' : '💻 已切換至【電腦版】：使用鍵盤 WASD 與滑鼠操作。');
+  }
+}
+
+function syncMobileMinimapCanvas() {
+  const mc = document.getElementById('minimapCanvas');
+  if (!mc) return;
+  if (STATE.deviceMode === 'mobile') {
+    const isLandscape = window.innerWidth > window.innerHeight;
+    const sz = isLandscape ? 72 : 92;
+    if (mc.width !== sz || mc.height !== sz) {
+      mc.width = sz;
+      mc.height = sz;
+    }
+  } else if (mc.width !== 150 || mc.height !== 150) {
+    mc.width = 150;
+    mc.height = 150;
   }
 }
 
@@ -2907,9 +3137,10 @@ function enterPlayerBattleTurn(promptMsg = '* 輪到你的回合！請用 [← /
   b.subMenuIndex = 0;
   b.subMenuItems = [];
 
+  const isMobileLandscape = STATE.deviceMode === 'mobile' && window.innerHeight < 520;
   const box = document.getElementById('utBoxContainer');
   box.style.width = '660px';
-  box.style.height = '225px';
+  box.style.height = isMobileLandscape ? '145px' : '225px';
   document.getElementById('utTextBox').style.display = 'flex';
   document.getElementById('battleCanvas').style.display = 'none';
   document.getElementById('utPromptText').textContent = promptMsg;
@@ -2930,11 +3161,12 @@ function battleSelectFight(skillObj = null) {
   b.timingSkill = skillObj;
   setUtButtonsDisabled(true);
 
+  const isMobileLandscape = STATE.deviceMode === 'mobile' && window.innerHeight < 520;
   document.getElementById('utTextBox').style.display = 'none';
   const bc = document.getElementById('battleCanvas');
   bc.style.display = 'block';
   bc.width = Math.min(650, Math.floor(window.innerWidth * 0.9));
-  bc.height = 210;
+  bc.height = isMobileLandscape ? 140 : 210;
   AUDIO.play('blip');
 }
 
@@ -3100,12 +3332,11 @@ function startEnemyBulletTurn(bannerText) {
   b.patternTick = 0;
   b.bullets = [];
   b.lasers = [];
-  b.patternType = Math.floor(Math.random() * 5);
-
+  const isMobileLandscape = STATE.deviceMode === 'mobile' && window.innerHeight < 520;
   const box = document.getElementById('utBoxContainer');
   const maxW = Math.floor(window.innerWidth * 0.9);
   const bw = Math.min(maxW, b.enemy.isBoss ? 440 : 340);
-  const bh = b.enemy.isBoss ? 225 : 185;
+  const bh = isMobileLandscape ? 142 : (b.enemy.isBoss ? 225 : 185);
   box.style.width = `${bw}px`;
   box.style.height = `${bh}px`;
 
@@ -3132,9 +3363,10 @@ function startEnemyDissolve() {
   b.dissolveParticles = [];
   setUtButtonsDisabled(true);
 
+  const isMobileLandscape = STATE.deviceMode === 'mobile' && window.innerHeight < 520;
   const box = document.getElementById('utBoxContainer');
   box.style.width = '660px';
-  box.style.height = '225px';
+  box.style.height = isMobileLandscape ? '145px' : '225px';
   document.getElementById('utTextBox').style.display = 'flex';
   document.getElementById('battleCanvas').style.display = 'none';
   document.getElementById('utPromptText').textContent = `* 【${b.enemy.name}】正在化作光塵消散……`;
@@ -4916,6 +5148,7 @@ function gameLoop(now) {
 
 initTitleScreen();
 initMobileControls();
+window.addEventListener('resize', syncMobileMinimapCanvas);
 requestAnimationFrame(gameLoop);
 </script>
 </body>
