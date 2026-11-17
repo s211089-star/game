@@ -1408,6 +1408,8 @@
   <div class="mode-row">
     <button class="pixel-btn active" id="devicePcBtn" onclick="setDeviceMode('pc')">💻 電腦版 (預設 · 鍵盤滑鼠操作)</button>
     <button class="pixel-btn" id="deviceMobileBtn" onclick="setDeviceMode('mobile')">📱 手機友善版 (開啟虛擬搖桿與觸控按鍵)</button>
+    <button class="pixel-btn active" id="langTcBtn" data-no-translate="true" onclick="setLanguage('zh-Hant')">🌐 繁體中文</button>
+    <button class="pixel-btn" id="langScBtn" data-no-translate="true" onclick="setLanguage('zh-Hans')">🌐 简体中文</button>
   </div>
 
   <!-- 3. 五大職業選擇卡片 -->
@@ -1716,8 +1718,18 @@
       <button class="pixel-btn danger" onclick="toggleModal('settingsModal')">返回遊戲 [ESC]</button>
     </div>
     <div class="modal-body">
-      <!-- 畫面縮放與操作裝置模式設定 -->
+      <!-- 語言切換與畫面縮放、操作裝置模式設定 -->
       <div class="pixel-box" style="margin-bottom:12px; border-color:#facc15;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:8px; padding-bottom:8px; border-bottom:1px dashed #334155;">
+          <div>
+            <strong style="color:#4ade80; font-size:14px;">🌐 介面語言切換 (繁體中文 / 简体中文)</strong>
+            <div style="font-size:11px; color:#94a3b8;">即時切換全遊戲介面、對話、任務、物品與戰鬥文字語言。</div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="pixel-btn active" id="setLangTcBtn" data-no-translate="true" onclick="setLanguage('zh-Hant')">🌐 繁體中文</button>
+            <button class="pixel-btn" id="setLangScBtn" data-no-translate="true" onclick="setLanguage('zh-Hans')">🌐 简体中文</button>
+          </div>
+        </div>
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:8px;">
           <div>
             <strong style="color:var(--gold-bright); font-size:14px;">📱 操作模式切換（電腦版 / 手機友善虛擬按鍵版）</strong>
@@ -2328,28 +2340,35 @@ function getChestSprite(type, opened) {
 const WORLD_SIZE = 4800;
 const STATE = {
   started: false,
+  lang: 'zh-Hant', // 'zh-Hant' (繁體中文) | 'zh-Hans' (简体中文)
   mode: 'story',
   deviceMode: 'pc', // 'pc' (預設電腦版) | 'mobile' (手機友善版)
   selectedClass: 'knight',
   inDungeon: null,
   dungeonStage: 1,
-  dungeonProgress: {}, // { [dungeonId]: { currentStage: 1, highestStage: 1, bossDefeated: false, clearCount: 0 } }
+  dungeonProgress: {},
   selectedDungeonForModal: null,
   compassActive: true,
-
+  minimapZoom: 1.0,
+  chestSpawnTimer: 0,
+  enemySpawnTimer: 0,
+  camera: { x: 3580, y: 2430, zoom: 1.35, shake: 0 },
+  mouse: { x: 0, y: 0, worldX: 3580, worldY: 2430 },
+  keys: {},
+  mobileStick: { active: false, dx: 0, dy: 0, slowMode: false },
   player: {
     name: '艾爾文',
     classId: 'knight',
     level: 1,
     xp: 0,
     nextXp: 100,
+    gold: 250,
     hp: 185,
     maxHp: 185,
     mp: 105,
     maxMp: 105,
     hunger: 100,
     thirst: 100,
-    gold: 250,
     x: 3580,
     y: 2430,
     facing: 1,
@@ -2357,25 +2376,30 @@ const STATE = {
     animTimer: 0,
     weaponLevel: 1,
     enchant: null,
-    skillCds: [0, 0, 0],
     dodgeTimer: 0,
+    skillCds: [0, 0, 0],
     shieldActive: false,
     siegeMode: false,
     mounted: false,
     buffs: { atkMult: 1, speedMult: 1, timer: 0 }
   },
-
   inventory: {
-    medkit_s: 3,
+    medkit_s: 2,
     mp_pot: 2,
     water_pure: 3,
     meat_cooked: 3,
-    wood: 5,
-    herb: 3
+    wood: 2,
+    herb: 1
   },
-
   hotbar: ['medkit_s', 'medkit_l', 'mp_pot', 'water_pure', 'meat_cooked', 'cactus_juice', 'winter_stew', 'whetstone'],
-
+  entities: {
+    nodes: [],
+    chests: [],
+    enemies: [],
+    skillEffects: [],
+    texts: [],
+    finalBoss: null
+  },
   quests: {
     mainIdx: 0,
     completedSide: {},
@@ -2388,11 +2412,10 @@ const STATE = {
       kills_winter: 0,
       itemsUsed: 0,
       weaponUpgrades: 0,
-      resonances: 0,
-      goldPeak: 250
+      goldPeak: 250,
+      resonances: 0
     }
   },
-
   cheats: {
     enabled: false,
     godMode: false,
@@ -2403,22 +2426,11 @@ const STATE = {
     noclip: false,
     speedMult: 1.0
   },
-
-  entities: {
-    enemies: [],
-    chests: [],
-    nodes: [],
-    skillEffects: [],
-    texts: [],
-    finalBoss: null
-  },
-
-  // Undertale × 元氣騎士 回合制彈幕戰鬥狀態
   battle: {
     active: false,
     enemy: null,
-    turn: 'player', // 'player' | 'timing' | 'enemy_bullet' | 'dissolving' | 'victory'
-    menuIndex: 0, // 0: FIGHT, 1: SKILL, 2: ITEM, 3: FLEE
+    turn: 'player',
+    menuIndex: 0,
     subMenuActive: false,
     subMenuIndex: 0,
     subMenuItems: [],
@@ -2426,87 +2438,58 @@ const STATE = {
     timingDir: 1,
     timingSkill: null,
     bulletTimer: 0,
-    bulletDuration: 6.5,
+    bulletDuration: 6.0,
     patternType: 0,
     patternTick: 0,
-    soul: { x: 220, y: 115, invuln: 0, shield: false },
+    attackMode: 'eldritch_eyes',
     bullets: [],
     lasers: [],
     hazards: [],
-    attackMode: 'spring_eyes',
-    attackBanner: '',
+    soul: { x: 220, y: 115, invuln: 0, shield: false },
     dissolveTimer: 0,
-    dissolveDuration: 1.65,
+    dissolveDuration: 1.55,
     dissolveParticles: [],
     victoryReport: null
-  },
-
-  mobileStick: { active: false, dx: 0, dy: 0, slowMode: false },
-  minimapZoom: 1.0,
-  keys: {},
-  mouse: { x: 0, y: 0, worldX: 0, worldY: 0 },
-  camera: { x: 3580, y: 2430, zoom: 1.35, shake: 0 },
-  chestSpawnTimer: 0,
-  enemySpawnTimer: 0
+  }
 };
 
 /* ============================================================================
-   5. 起名系統、裝置模式切換與畫面縮放控制
+   5. 冒險者起名、電腦/手機模式切換與視野縮放控制
    ============================================================================ */
-const RANDOM_NAMES = ['亞瑟', '星辰旅者', '洛克', '菲歐娜', '萊恩哈特', '希爾薇', '克勞德', '艾莉絲', '雷諾', '暮光行者', '銀翼', '卡爾文'];
+const RANDOM_NAMES = ['艾爾文', '亞瑟', '莉亞', '賽琳娜', '凱爾', '雷歐納', '諾亞', '芙蕾雅', '索倫', '艾莉絲', '加百列', '維克多'];
 
 function onNameInputChange(val) {
-  const clean = val.trim();
+  const name = (val || '').trim();
+  const lower = name.toLowerCase();
   const hint = document.getElementById('nameEasterEggHint');
-  const lower = clean.toLowerCase();
-  if (!clean) {
-    hint.textContent = '* 請輸入一個名字，或點擊右側隨機生成。';
-    hint.style.color = '#94a3b8';
-  } else if (lower === 'frisk') {
-    hint.textContent = '❤️ * 你心中充滿了「決心 (DETERMINATION)」！';
+  if (!hint) return;
+
+  if (lower === 'frisk') {
+    hint.textContent = '❤️ * 決心（DETERMINATION）在你的靈魂深處閃耀！';
     hint.style.color = '#facc15';
-  } else if (lower === 'chara') {
-    hint.textContent = '🔪 * 「真正的名字。」四季大陸感受到一絲寒意……';
-    hint.style.color = '#f87171';
   } else if (lower === 'sans') {
-    hint.textContent = '💀 * heya. 彈幕閃避似乎變得格外有趣了呢。';
+    hint.textContent = '💀 * heya. 看來你準備好迎接一場「美好時光」了。';
     hint.style.color = '#38bdf8';
-  } else if (clean === '勇者' || clean === '艾爾文') {
-    hint.textContent = '⚔️ * 經典而充滿勇氣的冒險者之名！';
+  } else if (lower === 'chara') {
+    hint.textContent = '🔪 * 真正的名字。暗影力量正在回應你的呼喚……';
+    hint.style.color = '#f87171';
+  } else if (name === '勇者' || lower === 'hero') {
+    hint.textContent = '⚔️ * 傳說中的四季守護者之名！';
     hint.style.color = '#4ade80';
   } else {
-    hint.textContent = `✨ * 「${clean}」，四季暗影世界已準備好見證你的傳說。`;
-    hint.style.color = '#7dd3fc';
+    hint.textContent = '* 這個名字將銘刻於四季編年史中。';
+    hint.style.color = '#38bdf8';
   }
 }
 
 function generateRandomName() {
-  const picked = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)];
-  const inp = document.getElementById('playerNameInput');
-  inp.value = picked;
+  const input = document.getElementById('playerNameInput');
+  const cur = input ? input.value.trim() : '';
+  const pool = RANDOM_NAMES.filter(n => n !== cur);
+  const picked = pool[Math.floor(Math.random() * pool.length)];
+  if (input) input.value = picked;
   onNameInputChange(picked);
   AUDIO.play('blip');
-}
-
-function setDeviceMode(mode) {
-  STATE.deviceMode = mode;
-  const isMobile = mode === 'mobile';
-  document.body.classList.toggle('mobile-mode', isMobile);
-  document.body.classList.toggle('mobile-ui-active', isMobile);
-  document.getElementById('mobileControlsLayer').style.display = (isMobile && STATE.started) ? 'block' : 'none';
-
-  syncMobileMinimapCanvas();
-
-  // 同步標題畫面與設置面板按鈕狀態
-  document.getElementById('devicePcBtn').classList.toggle('active', !isMobile);
-  document.getElementById('deviceMobileBtn').classList.toggle('active', isMobile);
-  document.getElementById('setDevicePcBtn').classList.toggle('active', !isMobile);
-  document.getElementById('setDeviceMobileBtn').classList.toggle('active', isMobile);
-
-  AUDIO.play('blip');
-  if (STATE.started) {
-    addToast(isMobile ? '📱 已切換至【手機友善版】：橫/直屏精簡介面與虛擬按鍵已就緒！' : '💻 已切換至【電腦版】：使用鍵盤 WASD 與滑鼠操作。');
-  }
 }
 
 function syncMobileMinimapCanvas() {
@@ -2514,24 +2497,49 @@ function syncMobileMinimapCanvas() {
   if (!mc) return;
   if (STATE.deviceMode === 'mobile') {
     const isLandscape = window.innerWidth > window.innerHeight;
-    const sz = isLandscape ? 72 : 92;
+    const sz = isLandscape ? 72 : 94;
     if (mc.width !== sz || mc.height !== sz) {
       mc.width = sz;
       mc.height = sz;
     }
-  } else if (mc.width !== 150 || mc.height !== 150) {
-    mc.width = 150;
-    mc.height = 150;
+  } else {
+    if (mc.width !== 150 || mc.height !== 150) {
+      mc.width = 150;
+      mc.height = 150;
+    }
   }
 }
 
+function setDeviceMode(mode) {
+  STATE.deviceMode = mode === 'mobile' ? 'mobile' : 'pc';
+  const isMobile = STATE.deviceMode === 'mobile';
+  document.body.classList.toggle('mobile-mode', isMobile);
+
+  const layer = document.getElementById('mobileControlsLayer');
+  if (layer) layer.style.display = (isMobile && STATE.started) ? 'block' : 'none';
+
+  ['devicePcBtn', 'setDevicePcBtn'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('active', !isMobile);
+  });
+  ['deviceMobileBtn', 'setDeviceMobileBtn'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('active', isMobile);
+  });
+
+  syncMobileMinimapCanvas();
+  AUDIO.play('blip');
+}
+
 function setCameraZoom(val) {
-  const z = Math.max(0.8, Math.min(2.2, parseFloat(val)));
+  const z = Math.max(0.8, Math.min(2.2, parseFloat(val) || 1.35));
   STATE.camera.zoom = z;
-  const txt = `${z.toFixed(2)}x`;
-  document.getElementById('camZoomLabel').textContent = `視野 ${txt}`;
-  document.getElementById('settingsZoomVal').textContent = txt;
-  document.getElementById('settingsZoomSlider').value = z;
+  const lbl = document.getElementById('camZoomLabel');
+  if (lbl) lbl.textContent = `視野 ${z.toFixed(2)}x`;
+  const setVal = document.getElementById('settingsZoomVal');
+  if (setVal) setVal.textContent = `${z.toFixed(2)}x`;
+  const slider = document.getElementById('settingsZoomSlider');
+  if (slider) slider.value = z;
 }
 
 function zoomCamera(delta) {
@@ -2540,13 +2548,224 @@ function zoomCamera(delta) {
 }
 
 /* ============================================================================
+   5.5 繁體中文 / 简体中文 雙語即時轉換引擎 (DOM + Canvas 無損切換)
+   ============================================================================ */
+const TC_TO_SC_CHARS = {
+  '編':'编','史':'史','恆':'恒','像':'像','界':'界','彈':'弹','戰':'战','鬥':'斗','險':'险','環':'环','節':'节',
+  '墮':'堕','這':'这','個':'个','將':'将','銘':'铭','於':'于','電':'电','腦':'脑','預':'预','設':'设','鍵':'键',
+  '盤':'盘','機':'机','開':'开','啟':'启','虛':'虚','擬':'拟','搖':'摇','桿':'杆','與':'与','觸':'触','結':'结',
+  '導':'导','檔':'档','繼':'继','續':'续','遊':'游','翡':'翡','縮':'缩','畫':'画','視':'视','當':'当','關':'关',
+  '層':'层','擊':'击','敗':'败','衛':'卫','傳':'传','陣':'阵','務':'务','圖':'图','載':'载','線':'线','騎':'骑',
+  '藍':'蓝','條':'条','飽':'饱','狀態':'状态','動':'动','釋':'释','華':'华','麗':'丽','職':'职','業':'业','寶':'宝',
+  '話':'话','進':'进','選':'选','確':'确','認':'认','瑪':'玛','爾':'尔','強':'强','敵':'敌','籠':'笼','輪':'轮',
+  '請':'请','護':'护','傷':'伤','稱':'称','裝':'装','備':'备','製':'制','化':'化','器':'器','給':'给','軍':'军',
+  '離':'离','購':'购','買':'买','藥':'药','誌':'志','劇':'剧','齊':'齐','託':'托','數':'数','陸':'陆','覽':'览',
+  '間':'间','陽':'阳','壘':'垒','齒':'齿','鎮':'镇','聖':'圣','內':'内','弊':'弊','調':'调','細':'细','闊':'阔',
+  '賴':'赖','匯':'汇','總':'总','無':'无','換':'换','費':'费','飢':'饥','殺':'杀','牆':'墙','雙':'双','劍':'剑',
+  '衝':'冲','鋒':'锋','級':'级','滿':'满','財':'财','獲':'获','復':'复','音':'音','靜':'静','錘':'锤','舉':'举',
+  '諷':'讽','實':'实','複合':'复合','長':'长','採':'采','風':'风','後':'后','連':'连','傾':'倾','瀉':'泻','發':'发',
+  '貫':'贯','鳴':'鸣','加':'加','農':'农','轟':'轰','單':'单','燃':'燃','燒':'烧','烈':'烈','噴':'喷','飛':'飞',
+  '賦':'赋','殲':'歼','滅':'灭','毀':'毁','彎':'弯','斬':'斩','熱':'热','襲':'袭','槍':'枪','馬':'马','喚':'唤',
+  '揮':'挥','審':'审','躍':'跃','醫':'医','療':'疗','濃':'浓','縮':'缩','劑':'剂','鬧':'闹','純':'纯','淨':'净',
+  '壺':'壶','獸':'兽','獵':'猎','鮮':'鲜','氣':'气','燉':'炖','湯':'汤','堅':'坚','韌':'韧','礎':'础','築':'筑',
+  '崗':'岗','塊':'块','鍊':'炼','銀':'银','礦':'矿','屬':'属','靈':'灵','鑲':'镶','凍':'冻','裂':'裂','蘊':'蕴',
+  '熾':'炽','廚':'厨','灶':'灶','鐵':'铁','霧':'雾','廟':'庙','許':'许','領':'领','像':'像','樓':'楼','廢':'废',
+  '頭':'头','漢':'汉','龍':'龙','淵':'渊','亞':'亚','嚮':'向','歡':'欢','壞':'坏','試':'试','漩':'漩','渦':'涡',
+  '決':'决','積':'积','奧':'奥','絲':'丝','裡':'里','貴':'贵','學':'学','遺':'遗','跡':'迹','競':'竞','場':'场',
+  '歐':'欧','師':'师','傑':'杰','噠':'哒','奪':'夺','鴉':'鸦','驅':'驱','警':'警','見':'见','釀':'酿','莊':'庄',
+  '詩':'诗','統':'统','帥':'帅','階':'阶','溫':'温','維':'维','儲':'储','幫':'帮','頂':'顶','應':'应','邊':'边',
+  '鐘':'钟','聲':'声','終':'终','隊':'队','語':'语','園':'园','達':'达','專':'专','說':'说','彩':'彩','勞':'劳',
+  '佈':'布','簡':'简','潔':'洁','標':'标','損':'损','誤':'误','紀':'纪','錄':'录','尚':'尚','鎖':'锁','歸':'归',
+  '暈':'晕','紅':'红','縫':'缝','蝕':'蚀','逆':'逆','蟲':'虫','黃':'黄','追蹤':'追踪','隕':'陨','墜':'坠','漿':'浆',
+  '則':'则','過':'过','針':'针','奏':'奏','繞':'绕','絞':'绞','鋸':'锯','緣':'缘','顱':'颅','劃':'划','鐮':'镰',
+  '掃':'扫','錐':'锥','圍':'围','準':'准','順':'顺','創':'创','著':'着','纏':'缠','脫':'脱','塵':'尘','繪':'绘',
+  '處':'处','斷':'断','勝':'胜','賞':'赏','額':'额','訪':'访','畢':'毕','撐':'撑','勢':'势','環':'环','游':'游',
+  '網':'网','愛':'爱','剩':'剩','餘':'余','委託':'委托','隱':'隐','藏':'藏','採':'采','羅':'罗','滾':'滚','乘':'乘',
+  '點':'点','麵':'面','體':'体','國':'国','學':'学','會':'会','來':'来','說':'说','時':'时','為':'为','麼':'么',
+  '從':'从','對':'对','還':'还','樣':'样','經':'经','問':'问','題':'题','裡':'里','頭':'头','點':'点','種':'种',
+  '隻':'只','兩':'两','萬':'万','億':'亿','處':'处','號':'号','員':'员','區':'区','廠':'厂','廣':'广','廳':'厅',
+  '店':'店','庫':'库','應':'应','廢':'废','開':'开','關':'关','門':'门','問':'问','間':'间','聞':'闻','閱':'阅',
+  '隊':'队','陽':'阳','陰':'阴','陣':'阵','階':'阶','際':'际','隨':'随','隱':'隐','難':'难','雲':'云','電':'电',
+  '需':'需','震':'震','霍':'霍','霧':'雾','露':'露','靈':'灵','靜':'静','響':'响','頁':'页','頂':'顶','項':'项',
+  '順':'顺','須':'须','預':'预','領':'领','頭':'头','頻':'频','顆':'颗','題':'题','額':'额','顏':'颜','願':'愿',
+  '類':'类','顧':'顾','顯':'显','風':'风','飄':'飘','飛':'飞','飢':'饥','飯':'饭','飲':'饮','飽':'饱','飾':'饰',
+  '養':'养','餘':'余','館':'馆','馬':'马','駕':'驾','駛':'驶','騎':'骑','騙':'骗','騷':'骚','驅':'驱','驗':'验',
+  '驚':'惊','體':'体','髮':'发','鬥':'斗','鬧':'闹','鬱':'郁','魂':'魂','魔':'魔','魚':'鱼','魯':'鲁','鮮':'鲜',
+  '鳥':'鸟','鳴':'鸣','鴉':'鸦','鷹':'鹰','麗':'丽','麥':'麦','麵':'面','黃':'黄','點':'点','黨':'党','鼠':'鼠',
+  '齊':'齐','齒':'齿','龍':'龙','龜':'龟'
+};
+
+const PHRASE_TC_TO_SC = [
+  ['繁體中文', '简体中文'],
+  ['裝備', '装备'], ['狀態', '状态'], ['經驗', '经验'], ['確定', '确定'], ['確認', '确认'],
+  ['顯示', '显示'], ['畫面', '画面'], ['頁面', '页面'], ['設定', '设定'], ['設置', '设置'],
+  ['預設', '预设'], ['對話', '对话'], ['任務', '任务'], ['戰鬥', '战斗'], ['攻擊', '攻击'],
+  ['藍條', '蓝条'], ['飽食', '饱食'], ['勝利', '胜利'], ['開啟', '开启'], ['關閉', '关闭'],
+  ['下載', '下载'], ['導入', '导入'], ['存檔', '存档'], ['電腦版', '电脑版'], ['手機友善版', '手机友善版'],
+  ['選擇', '选择'], ['層數', '层数'], ['進度', '进度'], ['保留', '保留'], ['重新', '重新'],
+  ['調整', '调整'], ['簡化', '简化'], ['搖桿', '摇杆'], ['按鍵', '按键'], ['彈幕', '弹幕'],
+  ['比例', '比例'], ['恢復', '恢复'], ['消散', '消散'], ['獲得', '获得'], ['離開', '离开'],
+  ['箭頭', '箭头'], ['起名', '起名'], ['環節', '环节'], ['老闆娘', '老板娘'], ['武器舖', '武器铺']
+];
+
+function toSC(str) {
+  if (!str || typeof str !== 'string') return str;
+  let res = str;
+  for (let i = 0; i < PHRASE_TC_TO_SC.length; i++) {
+    const [tc, sc] = PHRASE_TC_TO_SC[i];
+    if (res.indexOf(tc) !== -1) res = res.split(tc).join(sc);
+  }
+  let out = '';
+  for (let i = 0; i < res.length; i++) {
+    const ch = res[i];
+    out += TC_TO_SC_CHARS[ch] || ch;
+  }
+  return out;
+}
+
+const ORIGINAL_TEXT_MAP = new WeakMap();
+const ORIGINAL_ATTR_MAP = new WeakMap();
+let isTranslatingDOM = false;
+
+function shouldSkipTranslate(node) {
+  let el = node.nodeType === 1 ? node : node.parentElement;
+  while (el) {
+    if (el.dataset && el.dataset.noTranslate === 'true') return true;
+    el = el.parentElement;
+  }
+  return false;
+}
+
+function translateNode(node) {
+  if (!node || shouldSkipTranslate(node)) return;
+  if (node.nodeType === 3) {
+    const cur = node.nodeValue;
+    if (!cur || !cur.trim()) return;
+    if (STATE.lang === 'zh-Hans') {
+      if (!ORIGINAL_TEXT_MAP.has(node)) {
+        ORIGINAL_TEXT_MAP.set(node, cur);
+      } else {
+        const prevOrig = ORIGINAL_TEXT_MAP.get(node);
+        if (cur !== toSC(prevOrig)) {
+          ORIGINAL_TEXT_MAP.set(node, cur);
+        }
+      }
+      const target = toSC(ORIGINAL_TEXT_MAP.get(node));
+      if (node.nodeValue !== target) {
+        node.nodeValue = target;
+      }
+    } else if (ORIGINAL_TEXT_MAP.has(node)) {
+      const orig = ORIGINAL_TEXT_MAP.get(node);
+      if (node.nodeValue !== orig) {
+        node.nodeValue = orig;
+      }
+    }
+  } else if (node.nodeType === 1) {
+    ['title', 'placeholder'].forEach(attr => {
+      if (node.hasAttribute(attr)) {
+        const val = node.getAttribute(attr);
+        let rec = ORIGINAL_ATTR_MAP.get(node);
+        if (!rec) { rec = {}; ORIGINAL_ATTR_MAP.set(node, rec); }
+        if (STATE.lang === 'zh-Hans') {
+          if (rec[attr] === undefined || val !== toSC(rec[attr])) rec[attr] = val;
+          const target = toSC(rec[attr]);
+          if (val !== target) node.setAttribute(attr, target);
+        } else if (rec[attr] !== undefined && val !== rec[attr]) {
+          node.setAttribute(attr, rec[attr]);
+        }
+      }
+    });
+  }
+}
+
+function applyLanguageToDOM(root = document.body) {
+  if (!root || isTranslatingDOM) return;
+  isTranslatingDOM = true;
+  try {
+    if (root.nodeType === 1) translateNode(root);
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, null);
+    let n = walker.nextNode();
+    while (n) {
+      translateNode(n);
+      n = walker.nextNode();
+    }
+    document.title = STATE.lang === 'zh-Hans'
+      ? '四季编年史：永恒之心 — 暗黑像素生存RPG'
+      : '四季編年史：永恆之心 — 暗黑像素生存RPG';
+  } finally {
+    isTranslatingDOM = false;
+  }
+}
+
+function setLanguage(lang) {
+  STATE.lang = (lang === 'zh-Hans') ? 'zh-Hans' : 'zh-Hant';
+  document.documentElement.lang = STATE.lang;
+
+  const isSc = STATE.lang === 'zh-Hans';
+  ['langTcBtn', 'setLangTcBtn'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('active', !isSc);
+  });
+  ['langScBtn', 'setLangScBtn'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('active', isSc);
+  });
+
+  applyLanguageToDOM(document.body);
+  if (STATE.started) {
+    updateHudUI();
+    updateQuestTrackerUI();
+    if (document.getElementById('mapModal').style.display === 'flex') renderFullMap();
+  }
+  AUDIO.play('blip');
+}
+
+// 攔截 Canvas 2D 文字繪製，使地圖與戰鬥畫布同步支援繁/簡體
+(function hookCanvasText() {
+  const origFillText = CanvasRenderingContext2D.prototype.fillText;
+  CanvasRenderingContext2D.prototype.fillText = function(text, x, y, maxWidth) {
+    const out = (STATE.lang === 'zh-Hans' && typeof text === 'string') ? toSC(text) : text;
+    return maxWidth !== undefined ? origFillText.call(this, out, x, y, maxWidth) : origFillText.call(this, out, x, y);
+  };
+  const origStrokeText = CanvasRenderingContext2D.prototype.strokeText;
+  CanvasRenderingContext2D.prototype.strokeText = function(text, x, y, maxWidth) {
+    const out = (STATE.lang === 'zh-Hans' && typeof text === 'string') ? toSC(text) : text;
+    return maxWidth !== undefined ? origStrokeText.call(this, out, x, y, maxWidth) : origStrokeText.call(this, out, x, y);
+  };
+})();
+
+const DOM_LANG_OBSERVER = new MutationObserver(mutations => {
+  if (isTranslatingDOM || STATE.lang !== 'zh-Hans') return;
+  isTranslatingDOM = true;
+  try {
+    for (const m of mutations) {
+      if (m.type === 'characterData') {
+        translateNode(m.target);
+      } else if (m.type === 'childList') {
+        m.addedNodes.forEach(added => {
+          translateNode(added);
+          if (added.nodeType === 1) {
+            const w = document.createTreeWalker(added, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, null);
+            let cur = w.nextNode();
+            while (cur) { translateNode(cur); cur = w.nextNode(); }
+          }
+        });
+      }
+    }
+  } finally {
+    isTranslatingDOM = false;
+  }
+});
+
+/* ============================================================================
    6. 本地存檔下載與導入系統 (JSON Export / Import)
    ============================================================================ */
 function exportSaveData() {
   const saveObj = {
     game: '四季編年史：永恆之心',
-    version: '3.2-DungeonSelect-MobileFix',
+    version: '3.3-Bilingual-TC-SC',
     savedAt: new Date().toISOString(),
+    lang: STATE.lang,
     mode: STATE.mode,
     deviceMode: STATE.deviceMode,
     cameraZoom: STATE.camera.zoom,
@@ -2602,6 +2821,7 @@ function handleImportFile(event) {
       }
       if (data.cheats) Object.assign(STATE.cheats, data.cheats);
       if (data.cameraZoom) setCameraZoom(data.cameraZoom);
+      if (data.lang) setLanguage(data.lang);
 
       if (!STATE.started) {
         AUDIO.init();
@@ -5699,6 +5919,7 @@ function gameLoop(now) {
 
 initTitleScreen();
 initMobileControls();
+DOM_LANG_OBSERVER.observe(document.body, { childList: true, subtree: true, characterData: true });
 window.addEventListener('resize', syncMobileMinimapCanvas);
 requestAnimationFrame(gameLoop);
 </script>
