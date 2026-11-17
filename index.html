@@ -575,19 +575,164 @@
     color: #86efac;
   }
 
-  /* 手機模式開啟時自動微調左下角狀態欄位置避免與搖桿重疊 */
-  body.mobile-ui-active #statusHud {
-    bottom: auto;
-    top: 215px;
-    left: 10px;
-    width: 215px;
-    padding: 7px 9px;
+  /* =========================================================
+     📱 手機友善版：直向螢幕零重疊精簡排版 (body.mobile-mode)
+     ========================================================= */
+  body.mobile-mode #minimapContainer {
+    top: 6px;
+    left: 6px;
+    width: 106px;
+    padding: 4px;
   }
-  body.mobile-ui-active #controlsHint {
+  body.mobile-mode #minimapContainer .minimap-header {
+    font-size: 10px;
+    margin-bottom: 2px;
+    justify-content: center;
+  }
+  body.mobile-mode #coordLabel {
     display: none;
   }
-  body.mobile-ui-active #bottomCenterHud {
-    bottom: 145px;
+  body.mobile-mode #minimapContainer .minimap-controls {
+    margin-top: 3px;
+    gap: 2px;
+  }
+  body.mobile-mode #camZoomLabel {
+    font-size: 9px;
+  }
+
+  body.mobile-mode #rightHud {
+    top: 6px;
+    right: 6px;
+    width: calc(100vw - 120px);
+    gap: 4px;
+  }
+  body.mobile-mode #rightHud > .pixel-box {
+    padding: 5px 6px;
+  }
+  body.mobile-mode .top-nav-btns {
+    gap: 3px;
+  }
+  body.mobile-mode .top-nav-btns .pixel-btn {
+    padding: 4px 2px;
+    font-size: 10px;
+    line-height: 1.2;
+  }
+  body.mobile-mode .nav-key-hint,
+  body.mobile-mode .save-ext-hint,
+  body.mobile-mode .bar-sub-hint {
+    display: none;
+  }
+  body.mobile-mode .save-quick-row {
+    gap: 4px;
+    margin-top: 4px;
+  }
+  body.mobile-mode .save-quick-row .pixel-btn {
+    padding: 3px 4px;
+    font-size: 10px;
+  }
+  body.mobile-mode #questTracker {
+    padding: 5px 7px;
+    font-size: 10px;
+  }
+  body.mobile-mode #questTracker .quest-title-tag {
+    margin-bottom: 2px;
+    padding-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  body.mobile-mode #trackerDesc {
+    display: none;
+  }
+  body.mobile-mode #trackerProgress {
+    margin-top: 1px;
+    font-size: 10px;
+  }
+
+  body.mobile-mode #statusHud {
+    top: 144px;
+    left: 6px;
+    bottom: auto;
+    width: 168px;
+    padding: 6px 8px;
+  }
+  body.mobile-mode #statusHud .bar-group {
+    margin-bottom: 4px;
+  }
+  body.mobile-mode #statusHud .bar-label {
+    font-size: 10px;
+  }
+  body.mobile-mode #statusHud .bar-track {
+    height: 9px;
+    border-width: 1px;
+  }
+  body.mobile-mode #statusHud .dual-survival {
+    gap: 5px;
+    margin-top: 3px;
+  }
+  body.mobile-mode #statusHud .dual-survival .bar-track {
+    height: 7px;
+  }
+  body.mobile-mode #buffStatusText {
+    display: none;
+  }
+
+  body.mobile-mode #controlsHint,
+  body.mobile-mode #skillsBar {
+    display: none !important;
+  }
+  body.mobile-mode #bottomCenterHud {
+    bottom: 136px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  body.mobile-mode .hotbar {
+    gap: 4px;
+  }
+  body.mobile-mode .hot-slot {
+    width: 38px;
+    height: 38px;
+  }
+  /* 手機版簡化為 4 格核心補給快捷欄，避免與左右拇指按鍵區重疊 */
+  body.mobile-mode .hot-slot:nth-child(n+5) {
+    display: none;
+  }
+
+  body.mobile-mode .mobile-stick-zone {
+    bottom: 12px;
+    left: 12px;
+    width: 110px;
+    height: 110px;
+  }
+  body.mobile-mode .mobile-stick-knob {
+    width: 42px;
+    height: 42px;
+  }
+  body.mobile-mode .mobile-slow-btn {
+    bottom: 130px;
+    left: 12px;
+    padding: 5px 9px;
+    font-size: 11px;
+  }
+  body.mobile-mode .mobile-action-cluster {
+    bottom: 12px;
+    right: 12px;
+    grid-template-columns: repeat(3, 48px);
+    gap: 6px;
+  }
+  body.mobile-mode .m-btn {
+    width: 48px;
+    height: 48px;
+    font-size: 11px;
+    border-radius: 8px;
+  }
+  body.mobile-mode #utBoxContainer {
+    width: min(94vw, 660px) !important;
+  }
+  body.mobile-mode #toastContainer {
+    top: 268px;
+    left: 6px;
+    max-width: 240px;
   }
 
   /* =========================================================
@@ -1030,14 +1175,14 @@
 <div id="rightHud">
   <div class="pixel-box" style="padding:7px;">
     <div class="top-nav-btns">
-      <button class="pixel-btn" onclick="toggleModal('bagModal')">🎒背包<br>[Tab]</button>
-      <button class="pixel-btn" onclick="toggleModal('questModal')">📜任務<br>[J]</button>
-      <button class="pixel-btn" onclick="toggleModal('mapModal')">🗺️地圖<br>[M]</button>
-      <button class="pixel-btn" onclick="toggleModal('settingsModal')">⚙️設置<br>[ESC]</button>
+      <button class="pixel-btn" onclick="toggleModal('bagModal')">🎒背包<span class="nav-key-hint"><br>[Tab]</span></button>
+      <button class="pixel-btn" onclick="toggleModal('questModal')">📜任務<span class="nav-key-hint"><br>[J]</span></button>
+      <button class="pixel-btn" onclick="toggleModal('mapModal')">🗺️地圖<span class="nav-key-hint"><br>[M]</span></button>
+      <button class="pixel-btn" onclick="toggleModal('settingsModal')">⚙️設置<span class="nav-key-hint"><br>[ESC]</span></button>
     </div>
     <div class="save-quick-row">
-      <button class="pixel-btn" style="border-color:#4ade80; color:#86efac; font-size:11px;" onclick="exportSaveData()">💾 下載存檔 (.json)</button>
-      <button class="pixel-btn" style="border-color:#38bdf8; color:#7dd3fc; font-size:11px;" onclick="triggerImportSave()">📂 導入存檔 (.json)</button>
+      <button class="pixel-btn" style="border-color:#4ade80; color:#86efac; font-size:11px;" onclick="exportSaveData()">💾 下載存檔<span class="save-ext-hint"> (.json)</span></button>
+      <button class="pixel-btn" style="border-color:#38bdf8; color:#7dd3fc; font-size:11px;" onclick="triggerImportSave()">📂 導入存檔<span class="save-ext-hint"> (.json)</span></button>
     </div>
   </div>
 
@@ -1054,18 +1199,18 @@
 
 <!-- 左下角四大生存數值 -->
 <div id="statusHud" class="pixel-box">
-  <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px; color:var(--gold-bright); font-weight:bold;">
-    <span id="hudClassLvl">Lv.1 艾爾文 · 騎士</span>
-    <span id="hudGold">💰 250 G</span>
+  <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:5px; color:var(--gold-bright); font-weight:bold; gap:4px;">
+    <span id="hudClassLvl" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Lv.1 艾爾文 · 騎士</span>
+    <span id="hudGold" style="white-space:nowrap;">💰 250 G</span>
   </div>
 
   <div class="bar-group">
-    <div class="bar-label"><span style="color:#f87171;">❤️ 生命 (HP)</span><span id="hpText">185 / 185</span></div>
+    <div class="bar-label"><span style="color:#f87171;">❤️ 生命<span class="bar-sub-hint"> (HP)</span></span><span id="hpText">185 / 185</span></div>
     <div class="bar-track"><div class="bar-fill" id="hpBar" style="width:100%; background:var(--hp-red);"></div></div>
   </div>
 
   <div class="bar-group">
-    <div class="bar-label"><span style="color:#60a5fa;">💧 藍條 (MP)</span><span id="mpText">105 / 105</span></div>
+    <div class="bar-label"><span style="color:#60a5fa;">💧 藍條<span class="bar-sub-hint"> (MP)</span></span><span id="mpText">105 / 105</span></div>
     <div class="bar-track"><div class="bar-fill" id="mpBar" style="width:100%; background:var(--mp-blue);"></div></div>
   </div>
 
@@ -1255,6 +1400,17 @@
         <div id="sideQuestList"></div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- 🌀 副本進度保留與層數選擇視窗 -->
+<div id="dungeonSelectModal" class="modal-backdrop">
+  <div class="pixel-box modal-window" style="width:620px;">
+    <div class="modal-header">
+      <h2 id="dsModalTitle">🌀 副本進度與出戰選擇</h2>
+      <button class="pixel-btn danger" onclick="toggleModal('dungeonSelectModal')">離開傳送陣 [ESC]</button>
+    </div>
+    <div class="modal-body" id="dsModalBody"></div>
   </div>
 </div>
 
@@ -1903,36 +2059,45 @@ const STATE = {
   selectedClass: 'knight',
   inDungeon: null,
   dungeonStage: 1,
+  dungeonProgress: {}, // { [dungeonId]: { currentStage: 1, highestStage: 1, bossDefeated: false, clearCount: 0 } }
+  selectedDungeonForModal: null,
   compassActive: true,
 
   player: {
     name: '艾爾文',
-    x: 3580, y: 2430,
     classId: 'knight',
-    level: 1, xp: 0, nextXp: 100,
-    hp: 185, maxHp: 185,
-    mp: 105, maxMp: 105,
-    hunger: 100, thirst: 100,
+    level: 1,
+    xp: 0,
+    nextXp: 100,
+    hp: 185,
+    maxHp: 185,
+    mp: 105,
+    maxMp: 105,
+    hunger: 100,
+    thirst: 100,
     gold: 250,
+    x: 3580,
+    y: 2430,
+    facing: 1,
+    animFrame: 0,
+    animTimer: 0,
     weaponLevel: 1,
     enchant: null,
+    skillCds: [0, 0, 0],
     dodgeTimer: 0,
     shieldActive: false,
     siegeMode: false,
     mounted: false,
-    buffs: { speedMult: 1, atkMult: 1, timer: 0 },
-    skillCds: [0, 0, 0],
-    animFrame: 0, animTimer: 0, facing: 1
+    buffs: { atkMult: 1, speedMult: 1, timer: 0 }
   },
 
   inventory: {
     medkit_s: 3,
+    mp_pot: 2,
     water_pure: 3,
     meat_cooked: 3,
-    mp_pot: 2,
     wood: 5,
-    stone: 3,
-    herb: 2
+    herb: 3
   },
 
   hotbar: ['medkit_s', 'medkit_l', 'mp_pot', 'water_pure', 'meat_cooked', 'cactus_juice', 'winter_stew', 'whetstone'],
@@ -1942,11 +2107,11 @@ const STATE = {
     completedSide: {},
     stats: {
       chestsOpened: 0,
+      totalKills: 0,
       kills_spring: 0,
       kills_summer: 0,
       kills_autumn: 0,
       kills_winter: 0,
-      totalKills: 0,
       itemsUsed: 0,
       weaponUpgrades: 0,
       resonances: 0,
@@ -1993,11 +2158,9 @@ const STATE = {
     soul: { x: 220, y: 115, invuln: 0, shield: false },
     bullets: [],
     lasers: [],
-    // 怪物消散動畫狀態
     dissolveTimer: 0,
     dissolveDuration: 1.65,
     dissolveParticles: [],
-    // 戰利品結算資料
     victoryReport: null
   },
 
@@ -2051,8 +2214,16 @@ function generateRandomName() {
 function setDeviceMode(mode) {
   STATE.deviceMode = mode;
   const isMobile = mode === 'mobile';
+  document.body.classList.toggle('mobile-mode', isMobile);
   document.body.classList.toggle('mobile-ui-active', isMobile);
   document.getElementById('mobileControlsLayer').style.display = (isMobile && STATE.started) ? 'block' : 'none';
+
+  // 手機版自動縮小雷達小地圖畫布尺寸，電腦版還原為 150x150
+  const mc = document.getElementById('minimapCanvas');
+  if (mc) {
+    mc.width = isMobile ? 96 : 150;
+    mc.height = isMobile ? 96 : 150;
+  }
 
   // 同步標題畫面與設置面板按鈕狀態
   document.getElementById('devicePcBtn').classList.toggle('active', !isMobile);
@@ -2062,7 +2233,7 @@ function setDeviceMode(mode) {
 
   AUDIO.play('blip');
   if (STATE.started) {
-    addToast(isMobile ? '📱 已切換至【手機友善版】：左下角虛擬搖桿與右下角觸控按鍵已開啟！' : '💻 已切換至【電腦版】：使用鍵盤 WASD 與滑鼠操作。');
+    addToast(isMobile ? '📱 已切換至【手機友善版】：精簡介面與虛擬按鍵已就緒！' : '💻 已切換至【電腦版】：使用鍵盤 WASD 與滑鼠操作。');
   }
 }
 
@@ -2086,13 +2257,14 @@ function zoomCamera(delta) {
 function exportSaveData() {
   const saveObj = {
     game: '四季編年史：永恆之心',
-    version: '3.0-DarkUT-Mobile',
+    version: '3.2-DungeonSelect-MobileFix',
     savedAt: new Date().toISOString(),
     mode: STATE.mode,
     deviceMode: STATE.deviceMode,
     cameraZoom: STATE.camera.zoom,
     inDungeon: STATE.inDungeon,
     dungeonStage: STATE.dungeonStage,
+    dungeonProgress: STATE.dungeonProgress,
     player: STATE.player,
     inventory: STATE.inventory,
     hotbar: STATE.hotbar,
@@ -2134,6 +2306,7 @@ function handleImportFile(event) {
       if (!STATE.player.name) STATE.player.name = '艾爾文';
       STATE.inventory = data.inventory || {};
       if (data.hotbar) STATE.hotbar = data.hotbar;
+      if (data.dungeonProgress) STATE.dungeonProgress = data.dungeonProgress;
       if (data.quests) {
         STATE.quests.mainIdx = data.quests.mainIdx || 0;
         STATE.quests.completedSide = data.quests.completedSide || {};
@@ -2370,9 +2543,107 @@ function spawnFinalBoss() {
 }
 
 /* ============================================================================
-   9. 八大副本三階段連戰系統 (核心打怪升級玩法)
+   9. 八大副本進度保留、選擇頁面與三階段連戰系統
    ============================================================================ */
+function getDungeonProgress(dungeonId) {
+  if (!STATE.dungeonProgress[dungeonId]) {
+    STATE.dungeonProgress[dungeonId] = {
+      currentStage: 1,
+      highestStage: 1,
+      bossDefeated: false,
+      clearCount: 0
+    };
+  }
+  return STATE.dungeonProgress[dungeonId];
+}
+
+function openDungeonSelectModal(dungeon) {
+  STATE.selectedDungeonForModal = dungeon;
+  const prog = getDungeonProgress(dungeon.id);
+  const seasonTag = { spring: '🌸 翡翠之春', summer: '☀️ 烈陽之夏', autumn: '🍁 暮光之秋', winter: '❄️ 永冬之霜' }[dungeon.season] || '';
+  const rewardTxt = dungeon.rewardCore ? `${ITEMS[dungeon.rewardCore].icon} ${ITEMS[dungeon.rewardCore].name}` : `${ITEMS[dungeon.rewardItem].icon} ${ITEMS[dungeon.rewardItem].name} x2`;
+
+  document.getElementById('dsModalTitle').textContent = `🌀 副本進度與出戰選擇 — 【${dungeon.name}】`;
+
+  const statusBadge = prog.bossDefeated
+    ? `<span style="color:#4ade80; font-weight:bold;">👑 首領已擊敗（累計通關 ${prog.clearCount} 次）· 全三層已永久解鎖！</span>`
+    : (prog.currentStage > 1 || prog.highestStage > 1
+      ? `<span style="color:#facc15; font-weight:bold;">🔥 已保留副本進度：當前停留在第 ${prog.currentStage} / 3 層（最高抵達第 ${prog.highestStage} 層）</span>`
+      : `<span style="color:#94a3b8;">🆕 尚未探索此副本（第 1 / 3 層）</span>`);
+
+  const layers = [
+    { stage: 1, title: '第 1 層：前哨守衛', sub: `${dungeon.name}・前哨魔衛`, unlocked: true },
+    { stage: 2, title: '第 2 層：精英祭司', sub: `${dungeon.name}・深淵精英長老`, unlocked: prog.highestStage >= 2 || prog.bossDefeated },
+    { stage: 3, title: '第 3 層：首領決戰', sub: `【BOSS】${dungeon.bossName}`, unlocked: prog.highestStage >= 3 || prog.bossDefeated }
+  ];
+
+  const body = document.getElementById('dsModalBody');
+  body.innerHTML = `
+    <div class="pixel-box" style="margin-bottom:12px; border-color:${dungeon.color}; background:#12121c;">
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px; font-size:13px; margin-bottom:6px;">
+        <span>所屬界域：<strong style="color:#e2e8f0;">${seasonTag}</strong></span>
+        <span>推薦等級：<strong style="color:#38bdf8;">Lv.${dungeon.lvl}</strong></span>
+        <span>通關獎勵：<strong style="color:var(--gold-bright);">${rewardTxt}</strong></span>
+      </div>
+      <div style="font-size:12px; padding-top:6px; border-top:1px dashed #334155;">
+        ${statusBadge}
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
+      <button class="pixel-btn" style="padding:11px; font-size:14px; border-color:#4ade80; color:#86efac; text-align:center;"
+        onclick="confirmEnterDungeonStage(${prog.currentStage})">
+        ▶️ 繼續保留進度出戰（從第 ${prog.currentStage} / 3 層開始）
+      </button>
+
+      <div style="font-size:12px; color:var(--gold-bright); font-weight:bold; margin-top:4px;">
+        🎯 自由選擇出戰層數（首領擊敗一次後可隨時直挑首領）：
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
+        ${layers.map(l => `
+          <button class="pixel-btn" style="padding:8px 6px; text-align:center; ${l.unlocked ? (l.stage === prog.currentStage ? 'border-color:#facc15;' : '') : 'opacity:0.4; cursor:not-allowed;'}"
+            ${l.unlocked ? `onclick="confirmEnterDungeonStage(${l.stage})"` : 'disabled'}>
+            <div style="font-size:12px; color:${l.unlocked ? '#facc15' : '#94a3b8'};">${l.unlocked ? '⚔️' : '🔒'} ${l.title}</div>
+            <div style="font-size:10px; color:#cbd5e1; margin-top:3px;">${l.sub}</div>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div style="border-top:1px solid #334155; padding-top:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+      <span style="font-size:11px; color:#94a3b8;">重置進度會將當前層數歸回第 1 層（保留已擊敗首領紀錄）。</span>
+      <button class="pixel-btn danger" onclick="resetAndEnterDungeon()">
+        🔄 重置副本進度（從第 1 層重新挑戰）
+      </button>
+    </div>
+  `;
+
+  toggleModal('dungeonSelectModal');
+  AUDIO.play('blip');
+}
+
+function confirmEnterDungeonStage(stage) {
+  const d = STATE.selectedDungeonForModal;
+  if (!d) return;
+  document.getElementById('dungeonSelectModal').style.display = 'none';
+  enterDungeon(d, stage);
+}
+
+function resetAndEnterDungeon() {
+  const d = STATE.selectedDungeonForModal;
+  if (!d) return;
+  const prog = getDungeonProgress(d.id);
+  prog.currentStage = 1;
+  document.getElementById('dungeonSelectModal').style.display = 'none';
+  addToast(`🔄 已重置【${d.name}】當前進度，從第 1 層重新開始挑戰！`);
+  enterDungeon(d, 1);
+}
+
 function enterDungeon(dungeon, stage = 1) {
+  const prog = getDungeonProgress(dungeon.id);
+  prog.currentStage = stage;
+  if (stage > prog.highestStage) prog.highestStage = stage;
+
   STATE.inDungeon = dungeon;
   STATE.dungeonStage = stage;
   STATE.player.x = 2400;
@@ -2426,6 +2697,7 @@ function enterDungeon(dungeon, stage = 1) {
 function exitDungeon() {
   if (!STATE.inDungeon) return;
   const d = STATE.inDungeon;
+  const prog = getDungeonProgress(d.id);
   STATE.inDungeon = null;
   STATE.dungeonStage = 1;
   document.getElementById('dungeonBanner').style.display = 'none';
@@ -2435,11 +2707,11 @@ function exitDungeon() {
   STATE.entities.chests = [];
   for (let i = 0; i < 32; i++) spawnRandomRoadChest();
   for (let i = 0; i < 16; i++) spawnOverworldEnemy();
-  addToast(`🚪 已離開副本【${d.name}】，返回四季暗影大陸。`);
+  addToast(`🚪 已離開副本【${d.name}】，當前進度（第 ${prog.currentStage}/3 層）已保留！`);
 }
 
 /* ============================================================================
-   10. 全職業華麗技能動畫系統
+   10. 全職業華麗技能動畫系統 (Skill Visual Animations)
    ============================================================================ */
 function spawnSkillAnimation(type, x, y, angle = 0, color = '#facc15') {
   STATE.entities.skillEffects.push({
@@ -2491,7 +2763,7 @@ function triggerOverworldSkill(idx) {
     AUDIO.play('cannon');
   }
 
-  const nearby = STATE.entities.enemies.find(en => Math.hypot(en.x - p.x, en.y - p.y) < 160);
+  const nearby = STATE.entities.enemies.find(en => Math.hypot(en.x - p.x, en.y - p.y) < 165);
   if (nearby) {
     setTimeout(() => {
       startTurnBasedBattle(nearby, Math.round(getPlayerAtk() * sk.mult), sk.elem);
@@ -2527,10 +2799,7 @@ function triggerRightClickAbility() {
 }
 
 /* ============================================================================
-   11. UNDERTALE × 元氣騎士 回合制彈幕戰鬥核心引擎
-       - 支援左右 / A & D 鍵盤方向選單操作
-       - 怪物擊殺慢慢消散像素塵埃動畫
-       - 戰利品結算二次確認畫面
+   11. UNDERTALE × 元氣騎士 回合制彈幕戰鬥核心引擎 (含方向鍵選單、消散動畫與結算確認)
    ============================================================================ */
 function startTurnBasedBattle(enemy, preemptiveDmg = 0, preemptiveElem = null) {
   if (STATE.battle.active) return;
@@ -2549,13 +2818,11 @@ function startTurnBasedBattle(enemy, preemptiveDmg = 0, preemptiveElem = null) {
   b.subMenuItems = [];
   b.bullets = [];
   b.lasers = [];
-  b.dissolveTimer = 0;
   b.dissolveParticles = [];
-  b.victoryReport = null;
   b.soul = { x: 220, y: 115, invuln: 0, shield: STATE.player.shieldActive };
 
   document.getElementById('battleOverlay').style.display = 'flex';
-  renderBattleEnemySprite(0);
+  renderBattleEnemySprite();
 
   let introText = `* 遭遇了【${enemy.name}】(Lv.${enemy.level})！`;
   if (preemptiveDmg > 0) {
@@ -2568,66 +2835,26 @@ function startTurnBasedBattle(enemy, preemptiveDmg = 0, preemptiveElem = null) {
     return;
   }
 
-  setBattleEnemySpeech(enemy.isFinal ? `「${STATE.player.name}，時空輪迴將在你的眼前粉碎！」` : (enemy.isBoss ? '「想奪走季節核心？先接下我的彈幕風暴吧！」' : '「吼嗷——！入侵者休想通過！」'));
+  setBattleEnemySpeech(
+    enemy.isFinal
+      ? '「時空輪迴將在你的眼前粉碎！」'
+      : (enemy.isBoss
+        ? '「想奪走季節核心？先接下我的彈幕風暴吧！」'
+        : '「吼嗷——！入侵者休想通過！」')
+  );
   enterPlayerBattleTurn(introText);
   updateBattleUI();
 }
 
-function renderBattleEnemySprite(dissolveProgress = 0) {
+function renderBattleEnemySprite() {
   const en = STATE.battle.enemy;
   if (!en) return;
   const c = document.getElementById('btlEnemyCanvas');
   const ctx = c.getContext('2d');
   ctx.imageSmoothingEnabled = false;
   ctx.clearRect(0, 0, c.width, c.height);
-
-  if (dissolveProgress >= 1) return;
-
   const spr = getEnemySprite(en.season, en.isBoss, en.isFinal);
-  if (dissolveProgress <= 0) {
-    ctx.drawImage(spr, 0, 0, 128, 128);
-    return;
-  }
-
-  // 逐行向上消散效果 (Undertale 風格灰化分解)
-  const temp = document.createElement('canvas');
-  temp.width = 128; temp.height = 128;
-  const tctx = temp.getContext('2d');
-  tctx.imageSmoothingEnabled = false;
-  tctx.drawImage(spr, 0, 0, 128, 128);
-
-  const imgData = tctx.getImageData(0, 0, 128, 128);
-  const d = imgData.data;
-  const cutY = Math.floor(dissolveProgress * 128);
-
-  for (let y = 0; y < 128; y++) {
-    for (let x = 0; x < 128; x++) {
-      const idx = (y * 128 + x) * 4;
-      if (d[idx + 3] === 0) continue;
-      if (y < cutY) {
-        // 已掃描過的上方區域完全消散
-        d[idx + 3] = 0;
-      } else if (y < cutY + 14) {
-        // 正在分解的邊緣區域轉為灰白像素塵埃
-        const gray = (d[idx] + d[idx + 1] + d[idx + 2]) / 3;
-        d[idx] = gray; d[idx + 1] = gray; d[idx + 2] = gray;
-        if (Math.random() < 0.45) {
-          d[idx + 3] = 0;
-          if (Math.random() < 0.25) {
-            STATE.battle.dissolveParticles.push({
-              x, y,
-              vx: (Math.random() - 0.5) * 32,
-              vy: -25 - Math.random() * 45,
-              life: 0.7 + Math.random() * 0.5,
-              color: `rgb(${Math.round(gray)},${Math.round(gray)},${Math.round(gray)})`
-            });
-          }
-        }
-      }
-    }
-  }
-  tctx.putImageData(imgData, 0, 0);
-  ctx.drawImage(temp, 0, 0);
+  ctx.drawImage(spr, 0, 0, 128, 128);
 }
 
 function setBattleEnemySpeech(txt) {
@@ -2640,11 +2867,10 @@ function setUtButtonsDisabled(disabled) {
   });
 }
 
-// 更新底部四大按鈕選中光標 (支援左右 / A D 方向鍵)
 function battleSelectMainIndex(idx, execute = false) {
   const b = STATE.battle;
-  if (b.turn !== 'player') return;
-  b.menuIndex = (idx + 4) % 4;
+  if (!b.active || b.turn !== 'player') return;
+  b.menuIndex = ((idx % 4) + 4) % 4;
   b.subMenuActive = false;
 
   const btnIds = ['utBtnFight', 'utBtnSkill', 'utBtnItem', 'utBtnFlee'];
@@ -2656,33 +2882,31 @@ function battleSelectMainIndex(idx, execute = false) {
     if (cur) cur.style.visibility = isSel ? 'visible' : 'hidden';
   });
 
-  if (!execute) {
-    AUDIO.play('blip');
-    return;
-  }
+  AUDIO.play('blip');
 
-  if (b.menuIndex === 0) battleSelectFight();
-  else if (b.menuIndex === 1) battleSelectSkill();
-  else if (b.menuIndex === 2) battleSelectItem();
-  else if (b.menuIndex === 3) battleSelectFlee();
+  if (execute) {
+    if (b.menuIndex === 0) battleSelectFight();
+    else if (b.menuIndex === 1) battleSelectSkill();
+    else if (b.menuIndex === 2) battleSelectItem();
+    else if (b.menuIndex === 3) battleSelectFlee();
+  }
 }
 
-function updateSubMenuSelection() {
+function renderSubMenuSelection() {
   const b = STATE.battle;
-  const grid = document.getElementById('utSubMenuGrid');
-  const btns = grid.querySelectorAll('.ut-choice-btn');
+  const btns = document.querySelectorAll('#utSubMenuGrid .ut-choice-btn');
   btns.forEach((btn, i) => {
-    const sel = i === b.subMenuIndex;
-    btn.classList.toggle('selected', sel);
-    const heart = btn.querySelector('.sub-heart');
-    if (heart) heart.style.visibility = sel ? 'visible' : 'hidden';
+    btn.classList.toggle('selected', i === b.subMenuIndex);
   });
 }
 
-function enterPlayerBattleTurn(promptMsg = '* 輪到你的回合！用 [←/→] 或 [A/D] 選擇行動，按 [Space] 確認。') {
+function enterPlayerBattleTurn(promptMsg = '* 輪到你的回合！請用 [← / →] 或 [A / D] 選擇行動，按 [Space] 確認。') {
   const b = STATE.battle;
   b.turn = 'player';
   b.subMenuActive = false;
+  b.subMenuIndex = 0;
+  b.subMenuItems = [];
+
   const box = document.getElementById('utBoxContainer');
   box.style.width = '660px';
   box.style.height = '225px';
@@ -2709,8 +2933,8 @@ function battleSelectFight(skillObj = null) {
   document.getElementById('utTextBox').style.display = 'none';
   const bc = document.getElementById('battleCanvas');
   bc.style.display = 'block';
-  bc.width = 650;
-  bc.height = 215;
+  bc.width = Math.min(650, Math.floor(window.innerWidth * 0.9));
+  bc.height = 210;
   AUDIO.play('blip');
 }
 
@@ -2758,7 +2982,7 @@ function battleSelectSkill() {
   if (b.turn !== 'player') return;
   const cls = CLASSES[STATE.player.classId];
   const grid = document.getElementById('utSubMenuGrid');
-  document.getElementById('utPromptText').textContent = `* 選擇【${cls.name}】技能（[WASD/方向鍵] 選擇 · [Space] 施放 · [Esc/X] 返回）：`;
+  document.getElementById('utPromptText').textContent = `* 選擇要施放的【${cls.name}】職業技能（[Esc/X] 返回）：`;
   grid.innerHTML = '';
 
   b.subMenuActive = true;
@@ -2782,15 +3006,14 @@ function battleSelectSkill() {
       updateBattleUI();
       battleSelectFight(sk);
     };
-    b.subMenuItems.push(execFn);
 
+    b.subMenuItems.push(execFn);
     const btn = document.createElement('button');
     btn.className = 'ut-choice-btn' + (idx === 0 ? ' selected' : '');
-    btn.innerHTML = `<span class="sub-heart" style="color:#ef4444; visibility:${idx === 0 ? 'visible' : 'hidden'};">❤️</span><div>✨ ${sk.name} <span style="color:#38bdf8;">(${sk.mp} MP)</span><br><span style="font-size:11px; color:#94a3b8;">${sk.desc}</span></div>`;
+    btn.innerHTML = `<span>❤️</span><div>✨ ${sk.name} <span style="color:#38bdf8;">(${sk.mp} MP)</span><br><span style="font-size:11px; color:#94a3b8;">${sk.desc}</span></div>`;
     btn.onclick = execFn;
     grid.appendChild(btn);
   });
-  AUDIO.play('blip');
 }
 
 // 3) 選擇【道具 ITEM】
@@ -2798,35 +3021,35 @@ function battleSelectItem() {
   const b = STATE.battle;
   if (b.turn !== 'player') return;
   const grid = document.getElementById('utSubMenuGrid');
-  document.getElementById('utPromptText').textContent = '* 選擇補給品（[WASD/方向鍵] 選擇 · [Space] 使用 · [Esc/X] 返回）：';
+  document.getElementById('utPromptText').textContent = '* 選擇要使用的隨身補給品（[Esc/X] 返回）：';
   grid.innerHTML = '';
+
+  const consumables = Object.entries(STATE.inventory).filter(([id, cnt]) => cnt > 0 && ITEMS[id]?.type === 'consumable');
+  if (consumables.length === 0) {
+    b.subMenuActive = false;
+    grid.innerHTML = '<div style="color:#94a3b8; font-size:13px;">背包裡沒有可用的消耗品！</div>';
+    return;
+  }
 
   b.subMenuActive = true;
   b.subMenuIndex = 0;
   b.subMenuItems = [];
-
-  const consumables = Object.entries(STATE.inventory).filter(([id, cnt]) => cnt > 0 && ITEMS[id]?.type === 'consumable');
-  if (consumables.length === 0) {
-    grid.innerHTML = '<div style="color:#94a3b8; font-size:13px;">背包裡沒有可用的消耗品！按 [Esc] 返回。</div>';
-    return;
-  }
 
   consumables.forEach(([id, cnt], idx) => {
     const it = ITEMS[id];
     const execFn = () => {
       useItem(id);
       updateBattleUI();
-      startEnemyBulletTurn(`* ${STATE.player.name} 使用了 ${it.icon} ${it.name}！`);
+      startEnemyBulletTurn(`* 你使用了 ${it.icon} ${it.name}！`);
     };
     b.subMenuItems.push(execFn);
 
     const btn = document.createElement('button');
     btn.className = 'ut-choice-btn' + (idx === 0 ? ' selected' : '');
-    btn.innerHTML = `<span class="sub-heart" style="color:#ef4444; visibility:${idx === 0 ? 'visible' : 'hidden'};">❤️</span><div>${it.icon} ${it.name} x${cnt} <span style="color:#4ade80; font-size:11px;">(${it.hp ? '+' + it.hp + 'HP ' : ''}${it.mp ? '+' + it.mp + 'MP' : ''})</span></div>`;
+    btn.innerHTML = `<span>❤️</span><div>${it.icon} ${it.name} x${cnt} <span style="color:#4ade80; font-size:11px;">(${it.hp ? '+' + it.hp + 'HP ' : ''}${it.mp ? '+' + it.mp + 'MP' : ''})</span></div>`;
     btn.onclick = execFn;
     grid.appendChild(btn);
   });
-  AUDIO.play('blip');
 }
 
 // 4) 選擇【逃跑 FLEE】
@@ -2867,145 +3090,22 @@ function applyBattleDamageToEnemy(rawDmg, elem) {
   updateBattleUI();
 }
 
-// 進入【怪物擊殺慢慢消散動畫】
-function startEnemyDissolve() {
-  const b = STATE.battle;
-  b.turn = 'dissolving';
-  b.subMenuActive = false;
-  b.dissolveTimer = 0;
-  b.dissolveParticles = [];
-  setUtButtonsDisabled(true);
-
-  const box = document.getElementById('utBoxContainer');
-  box.style.width = '660px';
-  box.style.height = '225px';
-  document.getElementById('utTextBox').style.display = 'flex';
-  document.getElementById('battleCanvas').style.display = 'none';
-  document.getElementById('utSubMenuGrid').innerHTML = '';
-  document.getElementById('utPromptText').textContent = `* 【${b.enemy.name}】的身軀正在緩緩化作像素塵埃消散……`;
-
-  setBattleEnemySpeech('「唔呃……我的力量……正在消散……」');
-  AUDIO.play('dissolve');
-}
-
-// 消散完成後，顯示【戰利品結算二次確認畫面】
-function showBattleVictorySummary() {
-  const b = STATE.battle;
-  const en = b.enemy;
-  const p = STATE.player;
-  b.turn = 'victory';
-
-  const lootLines = [];
-  const prevLvl = p.level;
-  const gainedGold = en.gold || 30;
-  const gainedXp = en.xp || 40;
-
-  if (en.isFinal) {
-    en.dead = true;
-    p.gold += 10000;
-    gainXp(5000, true);
-    lootLines.push('👑 史詩成就：擊敗最終首領【時序吞噬者・克洛諾斯之影】！');
-    lootLines.push('💰 獲得榮耀金幣：+10,000 G');
-    lootLines.push('⭐ 獲得傳奇經驗：+5,000 EXP');
-  } else {
-    STATE.quests.stats.totalKills++;
-    if (en.season) STATE.quests.stats[`kills_${en.season}`] = (STATE.quests.stats[`kills_${en.season}`] || 0) + 1;
-    if (p.classId === 'dual') {
-      p.hunger = Math.min(100, p.hunger + 8);
-      p.thirst = Math.min(100, p.thirst + 8);
-      lootLines.push('🗡️ 雙劍嗜血被動：飽食度 +8%、水分 +8%');
-    }
-
-    p.gold += gainedGold;
-    gainXp(gainedXp, true);
-    lootLines.push(`⭐ 獲得經驗值：+${gainedXp} EXP` + (p.level > prevLvl ? ` （🎉 升級！Lv.${prevLvl} → Lv.${p.level}）` : ''));
-    lootLines.push(`💰 獲得戰利品金幣：+${gainedGold} G`);
-
-    if (Math.random() < 0.55) {
-      addItem('meat_raw', 1);
-      lootLines.push('🥩 掉落戰利品：生獸肉 x1');
-    }
-    if (Math.random() < 0.4) {
-      addItem('medkit_s', 1);
-      lootLines.push('🩹 掉落補給品：初級回血包 x1');
-    }
-
-    STATE.entities.enemies = STATE.entities.enemies.filter(e => e.id !== en.id);
-
-    // 副本進度結算
-    if (STATE.inDungeon) {
-      const d = STATE.inDungeon;
-      if (STATE.dungeonStage < 3) {
-        b.victoryReport = { nextDungeonStage: STATE.dungeonStage + 1, dungeon: d };
-        lootLines.push(`🌀 副本進度：【${d.name}】第 ${STATE.dungeonStage} 層已清空！確認後傳送至第 ${STATE.dungeonStage + 1} 層。`);
-      } else {
-        STATE.quests.stats[`dungeon_${d.id}`] = 1;
-        b.victoryReport = { exitDungeonAfter: true, dungeon: d };
-        if (d.rewardCore) {
-          addItem(d.rewardCore, 1);
-          lootLines.push(`🟢 副本通關核心獎勵：${ITEMS[d.rewardCore].name} x1`);
-        } else if (d.rewardItem) {
-          addItem(d.rewardItem, 2);
-          lootLines.push(`🎁 副本通關寶箱獎勵：${ITEMS[d.rewardItem].name} x2`);
-        }
-      }
-    }
-  }
-
-  checkQuestProgress();
-  AUDIO.play('chest');
-  setBattleEnemySpeech('（敵人已完全消散，戰利品散落一地。）');
-
-  const textBox = document.getElementById('utTextBox');
-  textBox.innerHTML = `
-    <div>
-      <div style="color:#facc15; font-weight:bold; font-size:17px; margin-bottom:4px;">🏆 戰鬥勝利！【${en.name}】已被擊敗</div>
-      <div class="victory-loot-list">
-        ${lootLines.map(line => `<div>• ${line}</div>`).join('')}
-      </div>
-    </div>
-    <button class="ut-choice-btn selected" style="justify-content:center; border-color:#4ade80; color:#86efac; font-size:15px;" onclick="confirmBattleVictoryAndLeave()">
-      ❤️ ✔ 確認戰利品並離開戰鬥 [Space / Enter]
-    </button>
-  `;
-}
-
-function confirmBattleVictoryAndLeave() {
-  const b = STATE.battle;
-  if (b.turn !== 'victory') return;
-  const rep = b.victoryReport;
-  closeBattleOverlay();
-
-  // 恢復原本的 utTextBox 結構供下次戰鬥使用
-  document.getElementById('utTextBox').innerHTML = `
-    <div id="utPromptText">* 輪到你的回合了！請用 [← / →] 或 [A / D] 選擇行動，按 [Space / Enter] 確認。</div>
-    <div id="utSubMenuGrid"></div>
-  `;
-
-  if (rep && rep.nextDungeonStage) {
-    enterDungeon(rep.dungeon, rep.nextDungeonStage);
-  } else if (rep && rep.exitDungeonAfter) {
-    addToast(`🎉 恭喜完全通關副本【${rep.dungeon.name}】！`);
-    exitDungeon();
-  }
-}
-
 // 進入【敵方回合：元氣騎士 × Undertale 彈幕閃避盒】
 function startEnemyBulletTurn(bannerText) {
   const b = STATE.battle;
   b.turn = 'enemy_bullet';
   b.subMenuActive = false;
   b.bulletTimer = 0;
-  b.bulletDuration = b.enemy.isBoss ? 7.0 : 5.0;
+  b.bulletDuration = b.enemy.isBoss ? 7.2 : 5.2;
   b.patternTick = 0;
   b.bullets = [];
   b.lasers = [];
-
   b.patternType = Math.floor(Math.random() * 5);
 
   const box = document.getElementById('utBoxContainer');
-  const bw = b.enemy.isBoss ? 440 : 340;
-  const bh = b.enemy.isBoss ? 230 : 190;
+  const maxW = Math.floor(window.innerWidth * 0.9);
+  const bw = Math.min(maxW, b.enemy.isBoss ? 440 : 340);
+  const bh = b.enemy.isBoss ? 225 : 185;
   box.style.width = `${bw}px`;
   box.style.height = `${bh}px`;
 
@@ -3019,43 +3119,197 @@ function startEnemyBulletTurn(bannerText) {
   b.soul.y = bh / 2;
   b.soul.invuln = 0.6;
 
-  setBattleEnemySpeech(bannerText + ' （使用 WASD / 虛擬搖桿閃避彈幕！）');
+  setBattleEnemySpeech(bannerText + ' （閃避彈幕！）');
   updateBattleUI();
+}
+
+// 怪物擊殺逐行消散沙化動畫 (Undertale Dissolve Effect)
+function startEnemyDissolve() {
+  const b = STATE.battle;
+  b.turn = 'dissolving';
+  b.dissolveTimer = 0;
+  b.dissolveDuration = 1.55;
+  b.dissolveParticles = [];
+  setUtButtonsDisabled(true);
+
+  const box = document.getElementById('utBoxContainer');
+  box.style.width = '660px';
+  box.style.height = '225px';
+  document.getElementById('utTextBox').style.display = 'flex';
+  document.getElementById('battleCanvas').style.display = 'none';
+  document.getElementById('utPromptText').textContent = `* 【${b.enemy.name}】正在化作光塵消散……`;
+  document.getElementById('utSubMenuGrid').innerHTML = '';
+
+  setBattleEnemySpeech('「……不可能……我的力量正在消散……」');
+  AUDIO.play('dissolve');
+}
+
+function updateDissolve(dt) {
+  const b = STATE.battle;
+  b.dissolveTimer += dt;
+  const progress = Math.min(1, b.dissolveTimer / b.dissolveDuration);
+
+  const c = document.getElementById('btlEnemyCanvas');
+  const ctx = c.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
+  ctx.clearRect(0, 0, c.width, c.height);
+
+  const en = b.enemy;
+  const spr = getEnemySprite(en.season, en.isBoss, en.isFinal);
+  const cutY = Math.floor(progress * 128);
+
+  // 繪製尚未消散的下半部立繪
+  if (cutY < 128) {
+    ctx.drawImage(spr, 0, (cutY / 128) * spr.height, spr.width, spr.height * (1 - cutY / 128), 0, cutY, 128, 128 - cutY);
+  }
+
+  // 在消散切線處不斷生成上升的白色/金色像素微塵
+  if (progress < 0.92) {
+    for (let i = 0; i < 9; i++) {
+      b.dissolveParticles.push({
+        x: 24 + Math.random() * 80,
+        y: cutY + (Math.random() - 0.5) * 6,
+        vx: (Math.random() - 0.5) * 32,
+        vy: -28 - Math.random() * 45,
+        life: 0.65 + Math.random() * 0.4,
+        color: Math.random() < 0.7 ? '#e2e8f0' : '#facc15'
+      });
+    }
+  }
+
+  b.dissolveParticles.forEach(pt => {
+    pt.x += pt.vx * dt;
+    pt.y += pt.vy * dt;
+    pt.life -= dt;
+    if (pt.life > 0) {
+      ctx.globalAlpha = Math.max(0, pt.life);
+      ctx.fillStyle = pt.color;
+      ctx.fillRect(Math.round(pt.x), Math.round(pt.y), 3, 3);
+    }
+  });
+  ctx.globalAlpha = 1.0;
+  b.dissolveParticles = b.dissolveParticles.filter(pt => pt.life > 0);
+
+  if (b.dissolveTimer >= b.dissolveDuration) {
+    showVictoryConfirmation();
+  }
+}
+
+// 戰利品結算確認畫面（等待玩家確認後再離開戰鬥）
+function showVictoryConfirmation() {
+  const b = STATE.battle;
+  const en = b.enemy;
+  const p = STATE.player;
+  b.turn = 'victory';
+  b.victoryReport = { nextAction: 'overworld', nextStage: 1 };
+
+  const lootLines = [];
+
+  if (en.isFinal) {
+    en.dead = true;
+    AUDIO.play('levelup');
+    const prevLvl = p.level;
+    p.gold += 10000;
+    gainXp(5000, true);
+    lootLines.push(`⭐ 獲得史詩經驗值：+5000 EXP` + (p.level > prevLvl ? ` （🎉 升級！Lv.${prevLvl} → Lv.${p.level}）` : ''));
+    lootLines.push(`💰 獲得王者賞金：+10000 G`);
+    lootLines.push(`👑 傳奇達成：擊敗【時序吞噬者・克洛諾斯之影】，四季大陸重獲永恆平衡！`);
+    checkQuestProgress();
+  } else {
+    STATE.quests.stats.totalKills++;
+    if (en.season) STATE.quests.stats[`kills_${en.season}`] = (STATE.quests.stats[`kills_${en.season}`] || 0) + 1;
+    if (p.classId === 'dual') {
+      p.hunger = Math.min(100, p.hunger + 8);
+      p.thirst = Math.min(100, p.thirst + 8);
+    }
+
+    const prevLvl = p.level;
+    const gainedGold = en.gold || 30;
+    const gainedXp = en.xp || 40;
+    p.gold += gainedGold;
+    gainXp(gainedXp, true);
+    lootLines.push(`⭐ 獲得經驗值：+${gainedXp} EXP` + (p.level > prevLvl ? ` （🎉 升級！Lv.${prevLvl} → Lv.${p.level}）` : ''));
+    lootLines.push(`💰 獲得戰利品金幣：+${gainedGold} G`);
+
+    if (Math.random() < 0.55) {
+      addItem('meat_raw', 1);
+      lootLines.push('🥩 額外掉落戰利品：生獸肉 x1');
+    }
+    if (Math.random() < 0.38) {
+      addItem('medkit_s', 1);
+      lootLines.push('🩹 額外掉落戰利品：初級回血包 x1');
+    }
+
+    STATE.entities.enemies = STATE.entities.enemies.filter(e => e.id !== en.id);
+
+    // 副本進度結算與保留
+    if (STATE.inDungeon) {
+      const d = STATE.inDungeon;
+      const prog = getDungeonProgress(d.id);
+      if (STATE.dungeonStage < 3) {
+        const nextStg = STATE.dungeonStage + 1;
+        prog.currentStage = nextStg;
+        if (nextStg > prog.highestStage) prog.highestStage = nextStg;
+        b.victoryReport = { nextAction: 'next_dungeon_stage', dungeon: d, nextStage: nextStg };
+        lootLines.push(`🌀 副本進度已保存：通關第 ${STATE.dungeonStage} 層，確認後自動傳送至第 ${nextStg} / 3 層！`);
+      } else {
+        prog.bossDefeated = true;
+        prog.clearCount = (prog.clearCount || 0) + 1;
+        prog.highestStage = 3;
+        prog.currentStage = 1;
+        STATE.quests.stats[`dungeon_${d.id}`] = 1;
+        b.victoryReport = { nextAction: 'exit_dungeon', dungeon: d };
+
+        if (d.rewardCore) {
+          addItem(d.rewardCore, 1);
+          lootLines.push(`🎉 副本完全通關！獲得傳說核心：${ITEMS[d.rewardCore].icon} ${ITEMS[d.rewardCore].name}`);
+        } else if (d.rewardItem) {
+          addItem(d.rewardItem, 2);
+          lootLines.push(`🎉 副本完全通關！獲得稀有獎勵：${ITEMS[d.rewardItem].icon} ${ITEMS[d.rewardItem].name} x2`);
+        }
+        lootLines.push(`🔓 【${d.name}】全三層已永久解鎖，下次造訪傳送陣可自由挑選層數挑戰！`);
+        AUDIO.play('levelup');
+      }
+    }
+    checkQuestProgress();
+  }
+
+  setBattleEnemySpeech('🏆 戰鬥勝利！請確認本次獲得的戰利品。');
+  document.getElementById('utPromptText').innerHTML = `
+    <div style="color:#facc15; font-weight:bold; font-size:16px;">🏆 戰鬥勝利！擊敗了【${en.name}】</div>
+    <div class="victory-loot-list">
+      ${lootLines.map(line => `<div>${line}</div>`).join('')}
+    </div>
+  `;
+  document.getElementById('utSubMenuGrid').innerHTML = `
+    <button class="ut-choice-btn selected" style="grid-column:span 2; justify-content:center; border-color:#4ade80; color:#86efac; font-size:15px;" onclick="confirmVictoryAndExit()">
+      ✔ 確認戰利品並繼續冒險 [Space / Enter]
+    </button>
+  `;
+}
+
+function confirmVictoryAndExit() {
+  const b = STATE.battle;
+  if (!b.active || b.turn !== 'victory') return;
+  const rep = b.victoryReport;
+  closeBattleOverlay();
+
+  if (rep && rep.nextAction === 'next_dungeon_stage') {
+    enterDungeon(rep.dungeon, rep.nextStage);
+  } else if (rep && rep.nextAction === 'exit_dungeon') {
+    exitDungeon();
+  }
 }
 
 function updateBattle(dt) {
   const b = STATE.battle;
   if (!b.active) return;
 
-  // 0. 怪物擊殺慢慢消散動畫
   if (b.turn === 'dissolving') {
-    b.dissolveTimer += dt;
-    const prog = Math.min(1, b.dissolveTimer / b.dissolveDuration);
-    renderBattleEnemySprite(prog);
-
-    // 繪製漂浮塵埃粒子
-    const c = document.getElementById('btlEnemyCanvas');
-    const ctx = c.getContext('2d');
-    b.dissolveParticles.forEach(pt => {
-      pt.x += pt.vx * dt;
-      pt.y += pt.vy * dt;
-      pt.life -= dt;
-      if (pt.life > 0) {
-        ctx.fillStyle = pt.color;
-        ctx.globalAlpha = Math.max(0, pt.life);
-        ctx.fillRect(pt.x, pt.y, 3, 3);
-        ctx.globalAlpha = 1;
-      }
-    });
-    b.dissolveParticles = b.dissolveParticles.filter(pt => pt.life > 0);
-
-    if (prog >= 1) {
-      showBattleVictorySummary();
-    }
+    updateDissolve(dt);
     return;
   }
 
-  // 1. 攻擊判定條移動
   if (b.turn === 'timing') {
     b.timingPos += b.timingDir * dt * 1.35;
     if (b.timingPos >= 1) { b.timingPos = 1; b.timingDir = -1; }
@@ -3064,7 +3318,6 @@ function updateBattle(dt) {
     return;
   }
 
-  // 2. 敵方彈幕閃避回合
   if (b.turn === 'enemy_bullet') {
     const bc = document.getElementById('battleCanvas');
     const bw = bc.width, bh = bc.height;
@@ -3073,13 +3326,16 @@ function updateBattle(dt) {
 
     if (b.soul.invuln > 0) b.soul.invuln -= dt;
 
-    // 玩家愛心移動 (支援鍵盤 + 手機虛擬搖桿)
-    let mx = STATE.mobileStick.active ? STATE.mobileStick.dx : 0;
-    let my = STATE.mobileStick.active ? STATE.mobileStick.dy : 0;
+    let mx = 0, my = 0;
     if (STATE.keys['w'] || STATE.keys['arrowup']) my -= 1;
     if (STATE.keys['s'] || STATE.keys['arrowdown']) my += 1;
     if (STATE.keys['a'] || STATE.keys['arrowleft']) mx -= 1;
     if (STATE.keys['d'] || STATE.keys['arrowright']) mx += 1;
+    if (STATE.mobileStick.active) {
+      mx += STATE.mobileStick.dx;
+      my += STATE.mobileStick.dy;
+    }
+
     if (mx !== 0 || my !== 0) {
       const len = Math.hypot(mx, my);
       if (len > 1) { mx /= len; my /= len; }
@@ -3176,7 +3432,7 @@ function updateBattle(dt) {
 
     if (b.bulletTimer >= b.bulletDuration) {
       b.soul.shield = false;
-      enterPlayerBattleTurn('* 你成功撐過了彈幕攻勢！用 [←/→] 或 [A/D] 選擇行動。');
+      enterPlayerBattleTurn('* 你成功撐過了彈幕攻勢！輪到你的回合。');
     }
   }
 }
@@ -3199,7 +3455,7 @@ function hitPlayerSoul(rawAtk) {
     p.hp = p.maxHp; p.mp = p.maxMp; p.hunger = 80; p.thirst = 80;
     if (STATE.inDungeon) exitDungeon();
     p.x = 3580; p.y = 2430;
-    addToast(`💀 ${p.name} 在彈幕決鬥中力竭倒下，已在翡翠樹冠營火旁復活！`);
+    addToast('💀 你在彈幕決鬥中力竭倒下，已在翡翠樹冠營火旁復活！');
   }
 }
 
@@ -3214,22 +3470,22 @@ function renderBattleCanvas() {
   if (b.turn === 'timing') {
     ctx.strokeStyle = '#475569';
     ctx.lineWidth = 3;
-    ctx.strokeRect(30, 45, w - 60, 110);
+    ctx.strokeRect(24, 42, w - 48, 108);
 
     const cx = w / 2;
     ctx.fillStyle = 'rgba(34, 197, 94, 0.28)';
-    ctx.fillRect(cx - (w - 60) * 0.18, 48, (w - 60) * 0.36, 104);
+    ctx.fillRect(cx - (w - 48) * 0.18, 45, (w - 48) * 0.36, 102);
     ctx.fillStyle = 'rgba(250, 204, 21, 0.55)';
-    ctx.fillRect(cx - (w - 60) * 0.06, 48, (w - 60) * 0.12, 104);
+    ctx.fillRect(cx - (w - 48) * 0.06, 45, (w - 48) * 0.12, 102);
 
-    const barX = 30 + b.timingPos * (w - 60);
+    const barX = 24 + b.timingPos * (w - 48);
     ctx.fillStyle = '#fff';
-    ctx.fillRect(barX - 4, 38, 8, 124);
+    ctx.fillRect(barX - 4, 35, 8, 122);
 
     ctx.fillStyle = '#facc15';
-    ctx.font = 'bold 14px monospace';
+    ctx.font = 'bold 13px monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('按下 [Space / Enter] 或 [點擊畫面] 鎖定暴擊！', w / 2, 188);
+    ctx.fillText('按下 [Space / Enter] 或 [點擊畫面] 鎖定暴擊！', w / 2, 182);
   } else if (b.turn === 'enemy_bullet') {
     b.lasers.forEach(lz => {
       if (lz.warnTimer > 0) {
@@ -3314,9 +3570,11 @@ function gainXp(amount, silent = false) {
     p.level++;
     p.nextXp = Math.round(p.nextXp * 1.26);
     applyClassStats(p.classId, true);
-    AUDIO.play('levelup');
-    spawnFloatingText(p.x, p.y - 36, `LEVEL UP! Lv.${p.level}`, '#facc15');
-    if (!silent) addToast(`⭐ ${p.name} 升級了！當前等級 Lv.${p.level}！`);
+    if (!silent) {
+      AUDIO.play('levelup');
+      spawnFloatingText(p.x, p.y - 36, `LEVEL UP! Lv.${p.level}`, '#facc15');
+      addToast(`⭐ 升級了！當前等級 Lv.${p.level}，生命與藍條已完全恢復！`);
+    }
   }
 }
 
@@ -3398,12 +3656,15 @@ function update(dt) {
   if (p.thirst <= 0 && !STATE.cheats.godMode) p.hp -= p.maxHp * 0.015 * dt;
 
   // WASD + 手機虛擬搖桿移動
-  let mx = STATE.mobileStick.active ? STATE.mobileStick.dx : 0;
-  let my = STATE.mobileStick.active ? STATE.mobileStick.dy : 0;
+  let mx = 0, my = 0;
   if (STATE.keys['w'] || STATE.keys['arrowup']) my -= 1;
   if (STATE.keys['s'] || STATE.keys['arrowdown']) my += 1;
   if (STATE.keys['a'] || STATE.keys['arrowleft']) mx -= 1;
   if (STATE.keys['d'] || STATE.keys['arrowright']) mx += 1;
+  if (STATE.mobileStick.active) {
+    mx += STATE.mobileStick.dx;
+    my += STATE.mobileStick.dy;
+  }
 
   if (mx !== 0 || my !== 0) {
     const len = Math.hypot(mx, my);
@@ -3433,11 +3694,12 @@ function update(dt) {
   }
 
   const canvas = document.getElementById('gameCanvas');
+  const z = STATE.camera.zoom || 1.35;
   STATE.camera.x = p.x;
   STATE.camera.y = p.y;
   if (STATE.camera.shake > 0) STATE.camera.shake = Math.max(0, STATE.camera.shake - dt * 25);
-  STATE.mouse.worldX = (STATE.mouse.x - canvas.width / 2) / STATE.camera.zoom + STATE.camera.x;
-  STATE.mouse.worldY = (STATE.mouse.y - canvas.height / 2) / STATE.camera.zoom + STATE.camera.y;
+  STATE.mouse.worldX = (STATE.mouse.x - canvas.width / 2) / z + STATE.camera.x;
+  STATE.mouse.worldY = (STATE.mouse.y - canvas.height / 2) / z + STATE.camera.y;
 
   STATE.chestSpawnTimer += dt;
   if (STATE.chestSpawnTimer >= 14) {
@@ -3473,7 +3735,7 @@ function update(dt) {
 }
 
 /* ============================================================================
-   13. 暗黑奇幻像素畫布渲染引擎 (支援動態縮放 zoom)
+   13. 暗黑奇幻像素畫布渲染引擎 (支援畫面縮放 + 技能動畫 + 小地圖)
    ============================================================================ */
 function render() {
   const canvas = document.getElementById('gameCanvas');
@@ -3485,27 +3747,26 @@ function render() {
   ctx.imageSmoothingEnabled = false;
 
   const p = STATE.player;
-  const zoom = STATE.camera.zoom;
+  const z = STATE.camera.zoom || 1.35;
+  const viewW = canvas.width / z;
+  const viewH = canvas.height / z;
   const shakeX = (Math.random() - 0.5) * STATE.camera.shake * 2;
   const shakeY = (Math.random() - 0.5) * STATE.camera.shake * 2;
+  const camX = STATE.camera.x - viewW / 2 + shakeX;
+  const camY = STATE.camera.y - viewH / 2 + shakeY;
 
   ctx.fillStyle = '#07070a';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ctx.save();
-  ctx.translate(canvas.width / 2 + shakeX, canvas.height / 2 + shakeY);
-  ctx.scale(zoom, zoom);
-  ctx.translate(-STATE.camera.x, -STATE.camera.y);
+  ctx.scale(z, z);
+  ctx.translate(-camX, -camY);
 
-  const halfW = (canvas.width / 2) / zoom;
-  const halfH = (canvas.height / 2) / zoom;
-
-  // 1. 暗黑低飽和度像素地形瓦片
   const tileSize = 32;
-  const startCol = Math.max(0, Math.floor((STATE.camera.x - halfW) / tileSize) - 1);
-  const endCol = Math.min(WORLD_SIZE / tileSize, Math.ceil((STATE.camera.x + halfW) / tileSize) + 1);
-  const startRow = Math.max(0, Math.floor((STATE.camera.y - halfH) / tileSize) - 1);
-  const endRow = Math.min(WORLD_SIZE / tileSize, Math.ceil((STATE.camera.y + halfH) / tileSize) + 1);
+  const startCol = Math.max(0, Math.floor(camX / tileSize));
+  const endCol = Math.min(WORLD_SIZE / tileSize, Math.ceil((camX + viewW) / tileSize));
+  const startRow = Math.max(0, Math.floor(camY / tileSize));
+  const endRow = Math.min(WORLD_SIZE / tileSize, Math.ceil((camY + viewH) / tileSize));
 
   for (let r = startRow; r < endRow; r++) {
     for (let c = startCol; c < endCol; c++) {
@@ -3550,18 +3811,27 @@ function render() {
     ctx.beginPath(); ctx.arc(2400, 2700, 24, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = '#7dd3fc'; ctx.lineWidth = 2; ctx.stroke();
     ctx.fillStyle = '#e2e8f0'; ctx.font = 'bold 12px monospace'; ctx.textAlign = 'center';
-    ctx.fillText('🚪 按 [F] 撤離副本', 2400, 2668);
+    ctx.fillText('🚪 按 [F] 撤離副本（保留層數）', 2400, 2668);
   } else {
     DUNGEONS.forEach(d => {
+      const prog = getDungeonProgress(d.id);
       ctx.fillStyle = d.color;
       ctx.beginPath(); ctx.arc(d.x, d.y, 26, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 3; ctx.stroke();
+      ctx.strokeStyle = prog.bossDefeated ? '#facc15' : '#e2e8f0';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
       ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 12px monospace'; ctx.textAlign = 'center';
-      ctx.fillText(`🌀 【副本】${d.name} (Lv.${d.lvl})`, d.x, d.y - 34);
+      const badge = prog.bossDefeated ? '👑已通關' : (prog.currentStage > 1 ? `第${prog.currentStage}/3層` : `Lv.${d.lvl}`);
+      ctx.fillText(`🌀 【副本】${d.name} (${badge})`, d.x, d.y - 34);
+      if (Math.hypot(d.x - p.x, d.y - p.y) < 75) {
+        ctx.fillStyle = '#facc15';
+        ctx.fillText('[F] 選擇層數 / 進入副本', d.x, d.y - 49);
+      }
     });
 
     STATE.entities.nodes.forEach(n => {
-      if (Math.abs(n.x - p.x) > halfW + 80 || Math.abs(n.y - p.y) > halfH + 80) return;
+      if (Math.abs(n.x - p.x) > viewW * 0.65 || Math.abs(n.y - p.y) > viewH * 0.65) return;
       ctx.globalAlpha = n.cooldown > 0 ? 0.3 : 0.9;
       ctx.font = '20px sans-serif'; ctx.textAlign = 'center';
       const icons = { wood: '🌲', herb: '🌿', iron: '🪨', water: '⛲' };
@@ -3571,7 +3841,7 @@ function render() {
   }
 
   STATE.entities.chests.forEach(c => {
-    if (Math.abs(c.x - p.x) > halfW + 80 || Math.abs(c.y - p.y) > halfH + 80) return;
+    if (Math.abs(c.x - p.x) > viewW * 0.65 || Math.abs(c.y - p.y) > viewH * 0.65) return;
     ctx.drawImage(getChestSprite(c.type, c.opened), c.x - 15, c.y - 13);
     if (!c.opened && Math.hypot(c.x - p.x, c.y - p.y) < 70) {
       ctx.fillStyle = '#facc15'; ctx.font = 'bold 11px monospace'; ctx.textAlign = 'center';
@@ -3581,7 +3851,7 @@ function render() {
 
   if (!STATE.inDungeon) {
     NPCS.forEach(npc => {
-      if (Math.abs(npc.x - p.x) > halfW + 80 || Math.abs(npc.y - p.y) > halfH + 80) return;
+      if (Math.abs(npc.x - p.x) > viewW * 0.65 || Math.abs(npc.y - p.y) > viewH * 0.65) return;
       ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(npc.x - 12, npc.y + 14, 24, 5);
       ctx.fillStyle = npc.color; ctx.fillRect(npc.x - 11, npc.y - 12, 22, 26);
       ctx.fillStyle = '#f3c69f'; ctx.fillRect(npc.x - 9, npc.y - 24, 18, 12);
@@ -3612,7 +3882,6 @@ function render() {
     ctx.fillText(fb.name, fb.x, fb.y - 54);
   }
 
-  // 繪製玩家高精細立繪與頭頂名字標籤
   ctx.save();
   ctx.translate(p.x, p.y);
   if (p.mounted) {
@@ -3622,11 +3891,6 @@ function render() {
   ctx.scale(p.facing, 1);
   ctx.drawImage(getClassSprite(p.classId, p.animFrame), -24, p.mounted ? -34 : -24, 48, 48);
   ctx.restore();
-
-  ctx.fillStyle = '#facc15';
-  ctx.font = 'bold 11px monospace';
-  ctx.textAlign = 'center';
-  ctx.fillText(p.name, p.x, p.y - (p.mounted ? 38 : 28));
 
   if (p.shieldActive) {
     ctx.strokeStyle = '#60a5fa'; ctx.lineWidth = 3;
@@ -3752,107 +4016,7 @@ function renderMinimap() {
 }
 
 /* ============================================================================
-   14. 📱 手機友善版：虛擬搖桿與觸控按鈕邏輯
-   ============================================================================ */
-function initMobileControls() {
-  const zone = document.getElementById('mobileStickZone');
-  const knob = document.getElementById('mobileStickKnob');
-  const maxR = 40;
-
-  const updateStick = (clientX, clientY) => {
-    const rect = zone.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    let dx = clientX - cx;
-    let dy = clientY - cy;
-    const dist = Math.hypot(dx, dy);
-    if (dist > maxR) {
-      dx = (dx / dist) * maxR;
-      dy = (dy / dist) * maxR;
-    }
-    knob.style.transform = `translate(${dx}px, ${dy}px)`;
-    STATE.mobileStick.dx = dx / maxR;
-    STATE.mobileStick.dy = dy / maxR;
-  };
-
-  zone.addEventListener('touchstart', e => {
-    e.preventDefault();
-    STATE.mobileStick.active = true;
-    const t = e.changedTouches[0];
-    updateStick(t.clientX, t.clientY);
-  }, { passive: false });
-
-  zone.addEventListener('touchmove', e => {
-    e.preventDefault();
-    if (!STATE.mobileStick.active) return;
-    const t = e.changedTouches[0];
-    updateStick(t.clientX, t.clientY);
-  }, { passive: false });
-
-  const resetStick = () => {
-    STATE.mobileStick.active = false;
-    STATE.mobileStick.dx = 0;
-    STATE.mobileStick.dy = 0;
-    knob.style.transform = 'translate(0px, 0px)';
-  };
-  zone.addEventListener('touchend', resetStick);
-  zone.addEventListener('touchcancel', resetStick);
-}
-
-function toggleMobileSlowMode() {
-  STATE.mobileStick.slowMode = !STATE.mobileStick.slowMode;
-  const btn = document.getElementById('mobileSlowToggleBtn');
-  btn.textContent = STATE.mobileStick.slowMode ? '🐢 慢速微操: 開' : '🐢 慢速微操: 關';
-  btn.classList.toggle('active', STATE.mobileStick.slowMode);
-  AUDIO.play('blip');
-}
-
-function mobileTriggerSkill(idx) {
-  if (!STATE.started) return;
-  if (STATE.battle.active) {
-    if (STATE.battle.turn === 'player') battleSelectMainIndex(1, true);
-    return;
-  }
-  triggerOverworldSkill(idx);
-}
-
-function mobileTriggerRmb() {
-  if (!STATE.started || STATE.battle.active) return;
-  triggerRightClickAbility();
-}
-
-function mobileTriggerInteract() {
-  if (!STATE.started) return;
-  if (STATE.battle.active) {
-    if (STATE.battle.turn === 'player') battleSelectMainIndex(STATE.battle.menuIndex + 1, false);
-    return;
-  }
-  handleInteractKey();
-}
-
-function mobileTriggerPrimary() {
-  if (!STATE.started) return;
-  if (STATE.battle.active) {
-    const b = STATE.battle;
-    if (b.turn === 'timing') confirmTimingAttack();
-    else if (b.turn === 'victory') confirmBattleVictoryAndLeave();
-    else if (b.turn === 'player') {
-      if (b.subMenuActive && b.subMenuItems[b.subMenuIndex]) b.subMenuItems[b.subMenuIndex]();
-      else battleSelectMainIndex(b.menuIndex, true);
-    }
-    return;
-  }
-  // 野外觸控攻擊
-  const p = STATE.player;
-  const target = STATE.entities.enemies.find(en => Math.hypot(en.x - p.x, en.y - p.y) < 180);
-  const ang = target ? Math.atan2(target.y - p.y, target.x - p.x) : (p.facing > 0 ? 0 : Math.PI);
-  spawnSkillAnimation(p.classId === 'gunner' ? 'mega_beam' : (p.classId === 'ranger' ? 'arrow_volley' : 'blade_vortex'), p.x, p.y, ang, CLASSES[p.classId].color);
-  AUDIO.play(p.classId === 'gunner' ? 'cannon' : (p.classId === 'ranger' ? 'shoot' : 'slash'));
-  if (target) startTurnBasedBattle(target);
-}
-
-/* ============================================================================
-   15. UI 渲染與互動控制 (背包、商店、任務、對話、地圖、作弊器)
+   14. UI 渲染與互動控制 (背包、商店、任務、對話、地圖)
    ============================================================================ */
 function addItem(itemId, count = 1) {
   STATE.inventory[itemId] = (STATE.inventory[itemId] || 0) + count;
@@ -4083,7 +4247,7 @@ function renderBagAndCraft() {
   const p = STATE.player;
   const elemNames = { spring: '🌸春之藤蔓', summer: '🔥夏之烈焰', autumn: '🌪️秋之狂風', winter: '❄️冬之寒霜' };
   document.getElementById('equipSummary').textContent =
-    `冒險者: ${p.name} | 職業: ${CLASSES[p.classId].name} | 武器強化: +${p.weaponLevel} (攻擊力 ${getPlayerAtk()}) | 附魔: ${p.enchant ? elemNames[p.enchant] : '無'}`;
+    `冒險者: ${p.name} (${CLASSES[p.classId].name}) | 武器強化: +${p.weaponLevel} (攻擊力 ${getPlayerAtk()}) | 附魔: ${p.enchant ? elemNames[p.enchant] : '無'}`;
 
   const invGrid = document.getElementById('inventoryGrid');
   invGrid.innerHTML = '';
@@ -4245,113 +4409,137 @@ function renderQuestJournal() {
 function renderFullMap() {
   const fc = document.getElementById('fullMapCanvas');
   const fctx = fc.getContext('2d');
-  const w = fc.width, h = fc.height;
-  const sc = w / WORLD_SIZE;
+  const scale = fc.width / WORLD_SIZE;
 
-  fctx.fillStyle = '#09090e'; fctx.fillRect(0, 0, w, h);
-  fctx.fillStyle = 'rgba(22,101,52,0.5)'; fctx.fillRect(2800 * sc, 0, 2000 * sc, h);
-  fctx.fillStyle = 'rgba(146,64,14,0.5)'; fctx.fillRect(0, 2800 * sc, w, 2000 * sc);
-  fctx.fillStyle = 'rgba(154,52,18,0.5)'; fctx.fillRect(0, 0, 2000 * sc, h);
-  fctx.fillStyle = 'rgba(7,89,133,0.5)'; fctx.fillRect(0, 0, w, 2000 * sc);
-  fctx.fillStyle = 'rgba(88,28,135,0.65)'; fctx.fillRect(2000 * sc, 2000 * sc, 800 * sc, 800 * sc);
+  fctx.fillStyle = '#09090f';
+  fctx.fillRect(0, 0, fc.width, fc.height);
+
+  fctx.fillStyle = '#143321'; fctx.fillRect(2800 * scale, 0, 2000 * scale, 4800 * scale);
+  fctx.fillStyle = '#45230f'; fctx.fillRect(0, 2800 * scale, 4800 * scale, 2000 * scale);
+  fctx.fillStyle = '#3b1811'; fctx.fillRect(0, 0, 2000 * scale, 4800 * scale);
+  fctx.fillStyle = '#102840'; fctx.fillRect(0, 0, 4800 * scale, 2000 * scale);
+  fctx.fillStyle = '#241642'; fctx.fillRect(2000 * scale, 2000 * scale, 800 * scale, 800 * scale);
 
   DUNGEONS.forEach(d => {
-    fctx.fillStyle = '#38bdf8';
-    fctx.beginPath(); fctx.arc(d.x * sc, d.y * sc, 6, 0, Math.PI * 2); fctx.fill();
+    const prog = getDungeonProgress(d.id);
+    fctx.fillStyle = prog.bossDefeated ? '#facc15' : '#38bdf8';
+    fctx.beginPath(); fctx.arc(d.x * scale, d.y * scale, 6, 0, Math.PI * 2); fctx.fill();
   });
 
   fctx.fillStyle = '#fff';
-  fctx.beginPath(); fctx.arc(STATE.player.x * sc, STATE.player.y * sc, 6, 0, Math.PI * 2); fctx.fill();
+  fctx.beginPath(); fctx.arc(STATE.player.x * scale, STATE.player.y * scale, 7, 0, Math.PI * 2); fctx.fill();
+
+  fctx.fillStyle = '#e2e8f0'; fctx.font = 'bold 13px monospace'; fctx.textAlign = 'center';
+  fctx.fillText('🌸 翡翠之春', 3900 * scale, 2400 * scale);
+  fctx.fillText('☀️ 烈陽之夏', 2400 * scale, 3900 * scale);
+  fctx.fillText('🍁 暮光之秋', 900 * scale, 2400 * scale);
+  fctx.fillText('❄️ 永冬之霜', 2400 * scale, 900 * scale);
+  fctx.fillText('👑 永恆聖殿', 2400 * scale, 2400 * scale);
 }
 
-function fastTravel(tx, ty) {
+function fastTravel(wx, wy) {
   if (STATE.inDungeon) exitDungeon();
-  if (!hasAllFourCores() && !STATE.cheats.noclip && Math.hypot(tx - 2400, ty - 2400) < 360) {
-    addToast('🔒 世界中心結界尚未解除！請先集齊四大季節核心或開啟自由模式。');
-    return;
-  }
-  STATE.player.x = tx;
-  STATE.player.y = ty;
-  document.getElementById('mapModal').style.display = 'none';
+  STATE.player.x = wx;
+  STATE.player.y = wy;
+  document.querySelectorAll('.modal-backdrop').forEach(m => m.style.display = 'none');
   AUDIO.play('heal');
-  addToast(`✨ 已通過時空傳送陣抵達 (${tx}, ${ty})！`);
+  addToast(`✨ 已傳送至座標 (${Math.round(wx)}, ${Math.round(wy)})`);
 }
 
-let dialogueTimer = null;
+let dlgTypeTimer = null;
 function openNpcDialogue(npc) {
-  const dlg = document.getElementById('dialogueModal');
-  dlg.style.display = 'block';
-  document.getElementById('dlgNpcName').textContent = `${npc.name} — 【${npc.role}】`;
+  const modal = document.getElementById('dialogueModal');
+  modal.style.display = 'block';
+  document.getElementById('dlgNpcName').textContent = `${npc.name} 【${npc.role}】`;
 
   const pc = document.getElementById('npcPortraitCanvas');
   const pctx = pc.getContext('2d');
-  pctx.fillStyle = '#11111a'; pctx.fillRect(0, 0, 84, 84);
-  pctx.fillStyle = npc.color; pctx.fillRect(22, 42, 40, 38);
+  pctx.imageSmoothingEnabled = false;
+  pctx.fillStyle = '#0d0d14'; pctx.fillRect(0, 0, 84, 84);
+  pctx.fillStyle = npc.color; pctx.fillRect(22, 42, 40, 42);
   pctx.fillStyle = '#f3c69f'; pctx.fillRect(24, 14, 36, 28);
-  pctx.fillStyle = '#09090b'; pctx.fillRect(32, 24, 5, 6); pctx.fillRect(47, 24, 5, 6);
+  pctx.fillStyle = '#09090b'; pctx.fillRect(32, 24, 5, 5); pctx.fillRect(47, 24, 5, 5);
 
   const rawLine = npc.lines[Math.floor(Math.random() * npc.lines.length)];
   const line = rawLine.replace(/\{PLAYER\}/g, STATE.player.name);
   const textEl = document.getElementById('dlgText');
-  textEl.textContent = '* ';
-  let idx = 0;
-  clearInterval(dialogueTimer);
-  dialogueTimer = setInterval(() => {
-    if (idx < line.length) {
-      textEl.textContent += line[idx++];
-      if (idx % 3 === 0) AUDIO.play('blip');
+  textEl.textContent = '';
+  clearInterval(dlgTypeTimer);
+  let i = 0;
+  dlgTypeTimer = setInterval(() => {
+    if (i < line.length) {
+      textEl.textContent += line[i++];
+      if (i % 3 === 0) AUDIO.play('blip');
     } else {
-      clearInterval(dialogueTimer);
+      clearInterval(dlgTypeTimer);
     }
-  }, 22);
+  }, 24);
 
-  const act = document.getElementById('dlgActions');
-  act.innerHTML = '';
+  const actDiv = document.getElementById('dlgActions');
+  actDiv.innerHTML = '';
   if (npc.hasShop) {
-    act.innerHTML += `<button class="pixel-btn" style="border-color:var(--gold-bright); color:var(--gold-bright);" onclick="closeDialogue(); openShop('${npc.name}')">🛒 打開補給商店</button>`;
+    actDiv.innerHTML += `<button class="pixel-btn" style="border-color:var(--gold-bright); color:var(--gold-bright);" onclick="closeDialogue(); openShop('${npc.name}')">🛒 打開補給商店</button>`;
   }
-  act.innerHTML += `<button class="pixel-btn" onclick="openNpcDialogue(NPCS.find(n=>n.id==='${npc.id}'))">💬 繼續交談</button>`;
-  act.innerHTML += `<button class="pixel-btn danger" onclick="closeDialogue()">結束對話 [ESC]</button>`;
+  actDiv.innerHTML += `<button class="pixel-btn" onclick="openNpcDialogue(NPCS.find(x=>x.id==='${npc.id}'))">💬 繼續交談</button>`;
+  actDiv.innerHTML += `<button class="pixel-btn danger" onclick="closeDialogue()">結束對話</button>`;
 }
 
 function closeDialogue() {
-  clearInterval(dialogueTimer);
   document.getElementById('dialogueModal').style.display = 'none';
+  clearInterval(dlgTypeTimer);
+}
+
+function spawnFloatingText(x, y, text, color) {
+  STATE.entities.texts.push({ x, y, text, color, life: 1.0 });
+}
+
+function addToast(msg) {
+  const box = document.getElementById('toastContainer');
+  const div = document.createElement('div');
+  div.className = 'toast-msg';
+  div.textContent = msg;
+  box.appendChild(div);
+  setTimeout(() => div.remove(), 3200);
 }
 
 /* ============================================================================
-   16. 內建作弊器功能
+   15. 系統設置內建作弊器
    ============================================================================ */
 function toggleCheatMaster() {
   STATE.cheats.enabled = !STATE.cheats.enabled;
   const btn = document.getElementById('toggleCheatMasterBtn');
+  const panel = document.getElementById('cheatPanelContainer');
   btn.textContent = STATE.cheats.enabled ? '狀態: ✅ 已開啟' : '狀態: ❌ 已關閉';
   btn.classList.toggle('active', STATE.cheats.enabled);
-  document.getElementById('cheatPanelContainer').style.display = STATE.cheats.enabled ? 'block' : 'none';
-  AUDIO.play('levelup');
+  panel.style.display = STATE.cheats.enabled ? 'block' : 'none';
+  if (!STATE.cheats.enabled) {
+    Object.assign(STATE.cheats, { enabled: false, godMode: false, infMp: false, noHunger: false, oneHit: false, freeCraft: false, noclip: false, speedMult: 1.0 });
+  }
+  AUDIO.play('chest');
 }
 
 function toggleCheatFlag(flag) {
   STATE.cheats[flag] = !STATE.cheats[flag];
-  const mapBtn = { godMode: 'cheatGodBtn', infMp: 'cheatMpBtn', noHunger: 'cheatSurvivalBtn', oneHit: 'cheatOneHitBtn', freeCraft: 'cheatFreeCraftBtn', noclip: 'cheatNoclipBtn' };
-  const btn = document.getElementById(mapBtn[flag]);
-  if (btn) {
-    btn.textContent = STATE.cheats[flag] ? 'ON' : 'OFF';
-    btn.classList.toggle('active', STATE.cheats[flag]);
-  }
+  const map = { godMode: 'cheatGodBtn', infMp: 'cheatMpBtn', noHunger: 'cheatSurvivalBtn', oneHit: 'cheatOneHitBtn', freeCraft: 'cheatFreeCraftBtn', noclip: 'cheatNoclipBtn' };
+  const btn = document.getElementById(map[flag]);
+  btn.textContent = STATE.cheats[flag] ? 'ON' : 'OFF';
+  btn.classList.toggle('active', STATE.cheats[flag]);
   AUDIO.play('blip');
 }
 
-function cheatSwitchClass(clsId) {
-  applyClassStats(clsId, true);
-  addToast(`🛠️ 已無縫切換職業為：【${CLASSES[clsId].name}】！`);
+function cheatSwitchClass(classId) {
+  applyClassStats(classId, true);
+  addToast(`🛠️ 作弊器：已無縫切換職業為【${CLASSES[classId].name}】！`);
 }
 
-function cheatLevelUp(add) {
-  STATE.player.level = Math.min(100, STATE.player.level + add);
+function cheatLevelUp(addLvls) {
+  for (let i = 0; i < addLvls; i++) {
+    if (STATE.player.level >= 100) break;
+    STATE.player.level++;
+  }
   applyClassStats(STATE.player.classId, true);
   AUDIO.play('levelup');
-  addToast(`📈 等級已提升至 Lv.${STATE.player.level}！`);
+  addToast(`🛠️ 作弊器：角色已提升至 Lv.${STATE.player.level}！`);
 }
 
 function cheatSetSpeedMult(val) {
@@ -4359,9 +4547,10 @@ function cheatSetSpeedMult(val) {
   document.getElementById('speedMultVal').textContent = `${val}x`;
 }
 
-function cheatAddGold(g) {
-  STATE.player.gold += g;
+function cheatAddGold(amt) {
+  STATE.player.gold += amt;
   AUDIO.play('chest');
+  addToast(`🛠️ 作弊器：獲得 ${amt} 金幣！`);
   checkQuestProgress();
 }
 
@@ -4371,131 +4560,230 @@ function spawnChestsAroundPlayer(count) {
     spawnRoadsideChest(STATE.player.x + Math.cos(a) * 90, STATE.player.y + Math.sin(a) * 90);
   }
   AUDIO.play('chest');
-  addToast(`🎁 已在腳下刷新 ${count} 個補給寶箱！`);
+  addToast(`🛠️ 作弊器：已在周圍生成 ${count} 個補給與黃金寶箱！`);
 }
 
-function cheatGiveItem(cnt) {
+function cheatGiveItem(count) {
   const id = document.getElementById('cheatItemSelect').value;
-  addItem(id, cnt);
+  addItem(id, count);
   AUDIO.play('chest');
-  addToast(`🎁 刷出物品：${ITEMS[id].name} x${cnt}`);
+  addToast(`🛠️ 作弊器：已將 ${ITEMS[id].name} x${count} 放入背包！`);
 }
 
 function cheatUnlockAllCores() {
-  ['core_spring', 'core_summer', 'core_autumn', 'core_winter'].forEach(c => addItem(c, 1));
-  addToast('👑 已集齊四季核心！世界中心永恆聖殿結界已開啟！');
+  ['core_spring', 'core_summer', 'core_autumn', 'core_winter'].forEach(c => {
+    if (!STATE.inventory[c]) addItem(c, 1);
+  });
+  AUDIO.play('levelup');
+  addToast('🛠️ 作弊器：已集齊四季核心！世界中心【永恆聖殿】結界已開啟！');
 }
 
 /* ============================================================================
-   17. 鍵盤、滑鼠、滾輪與觸控事件總控
+   16. 📱 手機友善版：虛擬搖桿與觸控按鍵控制
    ============================================================================ */
-function handleInteractKey() {
-  const p = STATE.player;
-  if (STATE.inDungeon && Math.hypot(p.x - 2400, p.y - 2700) < 65) {
-    exitDungeon();
+function initMobileControls() {
+  const zone = document.getElementById('mobileStickZone');
+  const knob = document.getElementById('mobileStickKnob');
+  let stickFlickCooldown = 0;
+
+  function updateStickFromTouch(touch) {
+    const rect = zone.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const maxR = rect.width * 0.42;
+    let dx = touch.clientX - cx;
+    let dy = touch.clientY - cy;
+    const dist = Math.hypot(dx, dy);
+    if (dist > maxR) {
+      dx = (dx / dist) * maxR;
+      dy = (dy / dist) * maxR;
+    }
+    knob.style.transform = `translate(${dx}px, ${dy}px)`;
+    STATE.mobileStick.active = true;
+    STATE.mobileStick.dx = dx / maxR;
+    STATE.mobileStick.dy = dy / maxR;
+
+    // 戰鬥選單中可用搖桿左右切換選項
+    if (STATE.battle.active && STATE.battle.turn === 'player' && performance.now() - stickFlickCooldown > 220) {
+      if (Math.abs(STATE.mobileStick.dx) > 0.65) {
+        stickFlickCooldown = performance.now();
+        if (STATE.battle.subMenuActive) {
+          const total = STATE.battle.subMenuItems.length;
+          if (total > 0) {
+            STATE.battle.subMenuIndex = (STATE.battle.subMenuIndex + (STATE.mobileStick.dx > 0 ? 1 : -1) + total) % total;
+            renderSubMenuSelection();
+            AUDIO.play('blip');
+          }
+        } else {
+          battleSelectMainIndex(STATE.battle.menuIndex + (STATE.mobileStick.dx > 0 ? 1 : -1), false);
+        }
+      }
+    }
+  }
+
+  function resetStick() {
+    STATE.mobileStick.active = false;
+    STATE.mobileStick.dx = 0;
+    STATE.mobileStick.dy = 0;
+    knob.style.transform = 'translate(0px, 0px)';
+  }
+
+  zone.addEventListener('touchstart', e => {
+    e.preventDefault();
+    if (e.changedTouches.length > 0) updateStickFromTouch(e.changedTouches[0]);
+  }, { passive: false });
+
+  zone.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (e.changedTouches.length > 0) updateStickFromTouch(e.changedTouches[0]);
+  }, { passive: false });
+
+  zone.addEventListener('touchend', e => {
+    e.preventDefault();
+    resetStick();
+  }, { passive: false });
+
+  zone.addEventListener('touchcancel', resetStick);
+}
+
+function toggleMobileSlowMode() {
+  STATE.mobileStick.slowMode = !STATE.mobileStick.slowMode;
+  const btn = document.getElementById('mobileSlowToggleBtn');
+  btn.textContent = STATE.mobileStick.slowMode ? '🐢 慢速微操: 開' : '🐢 慢速微操: 關';
+  btn.classList.toggle('active', STATE.mobileStick.slowMode);
+  AUDIO.play('blip');
+}
+
+function mobileTriggerSkill(idx) {
+  if (!STATE.started || STATE.battle.active) return;
+  triggerOverworldSkill(idx);
+}
+
+function mobileTriggerRmb() {
+  if (!STATE.started || STATE.battle.active) return;
+  triggerRightClickAbility();
+}
+
+function mobileTriggerInteract() {
+  if (!STATE.started) return;
+  if (STATE.battle.active) {
+    if (STATE.battle.turn === 'player' && STATE.battle.subMenuActive) {
+      enterPlayerBattleTurn();
+    }
+    return;
+  }
+  handleInteractKey();
+}
+
+function mobileTriggerPrimary() {
+  if (!STATE.started) return;
+  if (STATE.battle.active) {
+    const b = STATE.battle;
+    if (b.turn === 'timing') {
+      confirmTimingAttack();
+    } else if (b.turn === 'victory') {
+      confirmVictoryAndExit();
+    } else if (b.turn === 'player') {
+      if (b.subMenuActive && b.subMenuItems[b.subMenuIndex]) {
+        b.subMenuItems[b.subMenuIndex]();
+      } else {
+        battleSelectMainIndex(b.menuIndex, true);
+      }
+    }
     return;
   }
 
+  // 野外點擊攻擊/交戰
+  const p = STATE.player;
+  const ang = p.facing >= 0 ? 0 : Math.PI;
+  spawnSkillAnimation(p.classId === 'gunner' ? 'mega_beam' : (p.classId === 'ranger' ? 'arrow_volley' : 'blade_vortex'), p.x, p.y, ang, CLASSES[p.classId].color);
+  AUDIO.play(p.classId === 'gunner' ? 'cannon' : (p.classId === 'ranger' ? 'shoot' : 'slash'));
+
+  const target = STATE.entities.enemies.find(en => Math.hypot(en.x - p.x, en.y - p.y) < 170);
+  if (target) startTurnBasedBattle(target);
+}
+
+/* ============================================================================
+   17. 互動按鍵 [F]、輸入事件監聽與啟動主迴圈
+   ============================================================================ */
+function handleInteractKey() {
+  const p = STATE.player;
+
+  if (STATE.inDungeon) {
+    if (Math.hypot(p.x - 2400, p.y - 2700) < 65) {
+      exitDungeon();
+      return;
+    }
+  } else {
+    for (const d of DUNGEONS) {
+      if (Math.hypot(p.x - d.x, p.y - d.y) < 60) {
+        openDungeonSelectModal(d);
+        return;
+      }
+    }
+  }
+
   for (const c of STATE.entities.chests) {
-    if (!c.opened && Math.hypot(p.x - c.x, p.y - c.y) < 75) {
+    if (!c.opened && Math.hypot(p.x - c.x, p.y - c.y) < 65) {
       openChest(c);
       return;
     }
   }
 
   if (!STATE.inDungeon) {
-    for (const d of DUNGEONS) {
-      if (Math.hypot(p.x - d.x, p.y - d.y) < 65) {
-        enterDungeon(d, 1);
-        return;
-      }
-    }
-
     for (const npc of NPCS) {
-      if (Math.hypot(p.x - npc.x, p.y - npc.y) < 80) {
+      if (Math.hypot(p.x - npc.x, p.y - npc.y) < 75) {
         openNpcDialogue(npc);
         return;
       }
     }
-
     for (const n of STATE.entities.nodes) {
-      if (n.cooldown <= 0 && Math.hypot(p.x - n.x, p.y - n.y) < 65) {
+      if (n.cooldown <= 0 && Math.hypot(p.x - n.x, p.y - n.y) < 60) {
         gatherNode(n);
         return;
       }
     }
   }
-  addToast('ℹ️ 附近沒有可互動的箱子、NPC、副本傳送陣或資源點。');
-}
-
-function spawnFloatingText(x, y, text, color = '#fff') {
-  STATE.entities.texts.push({ x, y, text, color, life: 1.0 });
-}
-
-function addToast(msg) {
-  const cont = document.getElementById('toastContainer');
-  const div = document.createElement('div');
-  div.className = 'toast-msg';
-  div.textContent = msg;
-  cont.appendChild(div);
-  setTimeout(() => { if (div.parentNode) div.parentNode.removeChild(div); }, 3200);
 }
 
 window.addEventListener('keydown', e => {
+  if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
   const k = e.key.toLowerCase();
-
-  // 若正在標題畫面輸入名字，不攔截鍵盤
-  if (!STATE.started && document.activeElement && document.activeElement.id === 'playerNameInput') {
-    if (e.key === 'Enter') startGame();
-    return;
-  }
-
   STATE.keys[k] = true;
   if (!STATE.started) return;
 
-  // 戰鬥中的鍵盤專屬操控
+  // 戰鬥中鍵盤分流（支援左右/AD選擇行動、上下左右選擇子選單、Space/Enter確認）
   if (STATE.battle.active) {
     const b = STATE.battle;
-
-    // 1. 戰利品結算確認畫面：按 Space / Enter / Z 離開
-    if (b.turn === 'victory') {
-      if (k === ' ' || k === 'enter' || k === 'z') {
-        e.preventDefault();
-        confirmBattleVictoryAndLeave();
-      }
+    if (b.turn === 'timing' && (k === ' ' || k === 'enter' || k === 'z')) {
+      e.preventDefault();
+      confirmTimingAttack();
       return;
     }
-
-    // 2. 攻擊判定條階段：按 Space / Enter / Z 鎖定暴擊
-    if (b.turn === 'timing') {
-      if (k === ' ' || k === 'enter' || k === 'z') {
-        e.preventDefault();
-        confirmTimingAttack();
-      }
+    if (b.turn === 'victory' && (k === ' ' || k === 'enter' || k === 'z')) {
+      e.preventDefault();
+      confirmVictoryAndExit();
       return;
     }
-
-    // 3. 玩家回合：支援左右 / A D 方向鍵選擇行動，以及子選單方向導航
     if (b.turn === 'player') {
-      if (b.subMenuActive && b.subMenuItems.length > 0) {
-        const len = b.subMenuItems.length;
-        if (k === 'arrowleft' || k === 'a' || k === 'arrowup' || k === 'w') {
+      if (b.subMenuActive) {
+        const total = b.subMenuItems.length;
+        if (k === 'escape' || k === 'x') {
           e.preventDefault();
-          b.subMenuIndex = (b.subMenuIndex - 1 + len) % len;
-          updateSubMenuSelection();
+          enterPlayerBattleTurn();
+        } else if (total > 0 && (k === 'arrowright' || k === 'd' || k === 'arrowdown' || k === 's')) {
+          e.preventDefault();
+          b.subMenuIndex = (b.subMenuIndex + 1) % total;
+          renderSubMenuSelection();
           AUDIO.play('blip');
-        } else if (k === 'arrowright' || k === 'd' || k === 'arrowdown' || k === 's') {
+        } else if (total > 0 && (k === 'arrowleft' || k === 'a' || k === 'arrowup' || k === 'w')) {
           e.preventDefault();
-          b.subMenuIndex = (b.subMenuIndex + 1) % len;
-          updateSubMenuSelection();
+          b.subMenuIndex = (b.subMenuIndex - 1 + total) % total;
+          renderSubMenuSelection();
           AUDIO.play('blip');
         } else if (k === ' ' || k === 'enter' || k === 'z') {
           e.preventDefault();
-          b.subMenuItems[b.subMenuIndex]();
-        } else if (k === 'escape' || k === 'x') {
-          e.preventDefault();
-          enterPlayerBattleTurn('* 返回主行動選單。用 [← / →] 或 [A / D] 選擇行動。');
-          AUDIO.play('blip');
+          if (b.subMenuItems[b.subMenuIndex]) b.subMenuItems[b.subMenuIndex]();
         }
       } else {
         if (k === 'arrowleft' || k === 'a') {
@@ -4513,21 +4801,31 @@ window.addEventListener('keydown', e => {
     return;
   }
 
-  // 野外快捷鍵
   if (k === 'tab') { e.preventDefault(); toggleModal('bagModal'); }
   else if (k === 'j') toggleModal('questModal');
   else if (k === 'm') toggleModal('mapModal');
   else if (k === 'escape') {
-    closeDialogue();
-    const anyOpen = [...document.querySelectorAll('.modal-backdrop')].some(m => m.style.display === 'flex');
-    if (anyOpen) document.querySelectorAll('.modal-backdrop').forEach(m => m.style.display = 'none');
+    if (document.getElementById('dialogueModal').style.display === 'block') closeDialogue();
     else toggleModal('settingsModal');
   }
   else if (k === 'f') handleInteractKey();
   else if (k === 'q') triggerOverworldSkill(0);
   else if (k === 'e') triggerOverworldSkill(1);
   else if (k === 'r') triggerOverworldSkill(2);
-  else if (k >= '1' && k <= '8') useItem(STATE.hotbar[parseInt(k) - 1]);
+  else if (k === ' ') {
+    e.preventDefault();
+    const p = STATE.player;
+    if (p.dodgeTimer <= 0) {
+      p.dodgeTimer = 0.9;
+      const ang = Math.atan2(STATE.mouse.worldY - p.y, STATE.mouse.worldX - p.x);
+      p.x += Math.cos(ang) * 75; p.y += Math.sin(ang) * 75;
+      p.hunger = Math.max(0, p.hunger - 1.2);
+      AUDIO.play('slash');
+    }
+  } else if (['1','2','3','4','5','6','7','8'].includes(k)) {
+    const idx = parseInt(k, 10) - 1;
+    if (STATE.hotbar[idx]) useItem(STATE.hotbar[idx]);
+  }
 });
 
 window.addEventListener('keyup', e => {
@@ -4541,10 +4839,8 @@ gameCanvas.addEventListener('mousemove', e => {
 });
 gameCanvas.addEventListener('wheel', e => {
   if (!STATE.started || STATE.battle.active) return;
-  e.preventDefault();
   zoomCamera(e.deltaY < 0 ? 0.1 : -0.1);
-}, { passive: false });
-
+}, { passive: true });
 gameCanvas.addEventListener('mousedown', e => {
   if (!STATE.started || STATE.battle.active) return;
   if (e.button === 0) {
@@ -4554,70 +4850,73 @@ gameCanvas.addEventListener('mousedown', e => {
     spawnSkillAnimation(p.classId === 'gunner' ? 'mega_beam' : (p.classId === 'ranger' ? 'arrow_volley' : 'blade_vortex'), p.x, p.y, ang, CLASSES[p.classId].color);
     AUDIO.play(p.classId === 'gunner' ? 'cannon' : (p.classId === 'ranger' ? 'shoot' : 'slash'));
 
-    const target = STATE.entities.enemies.find(en => Math.hypot(en.x - STATE.mouse.worldX, en.y - STATE.mouse.worldY) < 90 || Math.hypot(en.x - p.x, en.y - p.y) < 130);
+    const target = STATE.entities.enemies.find(en => Math.hypot(en.x - p.x, en.y - p.y) < 165);
     if (target) startTurnBasedBattle(target);
-  } else if (e.button === 2) {
-    triggerRightClickAbility();
   }
+  if (e.button === 2) triggerRightClickAbility();
 });
 gameCanvas.addEventListener('contextmenu', e => e.preventDefault());
 
 document.getElementById('battleCanvas').addEventListener('mousedown', () => {
-  if (STATE.battle.active && STATE.battle.turn === 'timing') confirmTimingAttack();
+  if (STATE.battle.active && STATE.battle.turn === 'timing') {
+    confirmTimingAttack();
+  }
 });
 
 document.getElementById('minimapCanvas').addEventListener('click', e => {
   const rect = e.target.getBoundingClientRect();
-  const cx = e.clientX - rect.left;
-  const cy = e.clientY - rect.top;
-  const viewSpan = 1600 / STATE.minimapZoom;
-  const wx = Math.max(100, Math.min(WORLD_SIZE - 100, STATE.player.x + (cx - rect.width / 2) * (viewSpan / rect.width)));
-  const wy = Math.max(100, Math.min(WORLD_SIZE - 100, STATE.player.y + (cy - rect.height / 2) * (viewSpan / rect.height)));
-  fastTravel(Math.round(wx), Math.round(wy));
+  const mx = e.clientX - rect.left - rect.width / 2;
+  const my = e.clientY - rect.top - rect.height / 2;
+  const scale = rect.width / (1600 / STATE.minimapZoom);
+  fastTravel(STATE.player.x + mx / scale, STATE.player.y + my / scale);
 });
 
 document.getElementById('fullMapCanvas').addEventListener('click', e => {
   const rect = e.target.getBoundingClientRect();
-  const wx = Math.round(((e.clientX - rect.left) / rect.width) * WORLD_SIZE);
-  const wy = Math.round(((e.clientY - rect.top) / rect.height) * WORLD_SIZE);
+  const wx = ((e.clientX - rect.left) / rect.width) * WORLD_SIZE;
+  const wy = ((e.clientY - rect.top) / rect.height) * WORLD_SIZE;
   fastTravel(wx, wy);
 });
 
-/* ============================================================================
-   18. 啟動遊戲主程式
-   ============================================================================ */
 function startGame() {
   AUDIO.init();
+  AUDIO.play('levelup');
+
   const rawName = document.getElementById('playerNameInput').value.trim();
   STATE.player.name = rawName || '艾爾文';
 
   document.getElementById('titleScreen').style.display = 'none';
   STATE.started = true;
+  setDeviceMode(STATE.deviceMode);
+  setCameraZoom(STATE.camera.zoom);
   applyClassStats(STATE.selectedClass, true);
+
+  if (STATE.mode === 'free') {
+    STATE.player.gold = 2500;
+    addItem('medkit_l', 5);
+    addItem('whetstone', 3);
+    addToast(`🌍 自由沙盒模式已啟動，${STATE.player.name}！全結界解除，盡情挑戰八大副本！`);
+  } else {
+    addToast(`📖 歡迎踏入四季暗影世界，${STATE.player.name}！按 [F] 開箱、對話或進入副本吧！`);
+  }
   initWorldEntities();
   updateHotbarUI();
   updateQuestTrackerUI();
-  setDeviceMode(STATE.deviceMode);
-  setCameraZoom(STATE.camera.zoom);
-
-  AUDIO.play('levelup');
-  addToast(`⚔️ 歡迎踏入暗影四季大陸，${STATE.player.name}（${CLASSES[STATE.selectedClass].name}）！`);
+  updateHudUI();
 }
 
 let lastTime = performance.now();
-function mainLoop(now) {
+function gameLoop(now) {
   const dt = Math.min(0.05, (now - lastTime) / 1000);
   lastTime = now;
   update(dt);
-  render();
-  requestAnimationFrame(mainLoop);
+  if (!STATE.battle.active) render();
+  requestAnimationFrame(gameLoop);
 }
 
-window.onload = function () {
-  initTitleScreen();
-  initMobileControls();
-  requestAnimationFrame(mainLoop);
-};
+initTitleScreen();
+initMobileControls();
+requestAnimationFrame(gameLoop);
 </script>
 </body>
 </html>
