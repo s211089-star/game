@@ -726,8 +726,31 @@
     font-size: 11px;
     border-radius: 8px;
   }
-  body.mobile-mode #utBoxContainer {
-    width: min(94vw, 660px) !important;
+  body.mobile-mode #toastContainer {
+    top: 268px;
+    left: 6px;
+    max-width: 240px;
+  }
+
+  /* =========================================================
+     📱 手機友善版：戰鬥頁面專用極簡控制 (隱藏搖桿與多餘按鍵，僅保留單一攻擊/確認鍵)
+     ========================================================= */
+  body.mobile-mode.in-battle .mobile-stick-zone,
+  body.mobile-mode.in-battle .mobile-slow-btn,
+  body.mobile-mode.in-battle .mobile-action-cluster .m-btn:not(#mBtnPrimary) {
+    display: none !important;
+  }
+  body.mobile-mode.in-battle .mobile-action-cluster {
+    display: flex !important;
+    bottom: 62px;
+    right: 12px;
+  }
+  body.mobile-mode.in-battle #mBtnPrimary {
+    width: 64px;
+    height: 52px;
+    font-size: 12px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.85);
   }
   body.mobile-mode #toastContainer {
     top: 268px;
@@ -1484,7 +1507,7 @@
     <button class="m-btn" onclick="mobileTriggerSkill(2)">R<br><span style="font-size:9px;">大招</span></button>
     <button class="m-btn" onclick="mobileTriggerRmb()">⚡<br><span style="font-size:9px;">職業技</span></button>
     <button class="m-btn interact" onclick="mobileTriggerInteract()">💬/📦<br><span style="font-size:9px;">互動[F]</span></button>
-    <button class="m-btn primary" onclick="mobileTriggerPrimary()">⚔️/✔<br><span style="font-size:9px;">攻擊確認</span></button>
+    <button class="m-btn primary" id="mBtnPrimary" onclick="mobileTriggerPrimary()">⚔️/✔<br><span style="font-size:9px;">攻擊確認</span></button>
   </div>
 </div>
 
@@ -3052,28 +3075,20 @@ function startTurnBasedBattle(enemy, preemptiveDmg = 0, preemptiveElem = null) {
   b.soul = { x: 220, y: 115, invuln: 0, shield: STATE.player.shieldActive };
 
   document.getElementById('battleOverlay').style.display = 'flex';
+  document.body.classList.add('in-battle');
   renderBattleEnemySprite();
 
-  let introText = `* 遭遇了【${enemy.name}】(Lv.${enemy.level})！`;
   if (preemptiveDmg > 0) {
     applyBattleDamageToEnemy(preemptiveDmg, preemptiveElem);
-    introText = `* 先制奇襲！你發動職業技能對【${enemy.name}】造成 ${preemptiveDmg} 點傷害！`;
+    if (enemy.hp <= 0) {
+      startEnemyDissolve();
+      return;
+    }
+    enterPlayerBattleTurn(`* 先制技能命中！對【${enemy.name}】造成 ${preemptiveDmg} 點傷害！`);
+  } else {
+    setBattleEnemySpeech(`* 野生的【${enemy.name}】擋住了去路！`);
+    enterPlayerBattleTurn();
   }
-
-  if (enemy.hp <= 0) {
-    startEnemyDissolve();
-    return;
-  }
-
-  setBattleEnemySpeech(
-    enemy.isFinal
-      ? '「時空輪迴將在你的眼前粉碎！」'
-      : (enemy.isBoss
-        ? '「想奪走季節核心？先接下我的彈幕風暴吧！」'
-        : '「吼嗷——！入侵者休想通過！」')
-  );
-  enterPlayerBattleTurn(introText);
-  updateBattleUI();
 }
 
 function renderBattleEnemySprite() {
@@ -3084,16 +3099,18 @@ function renderBattleEnemySprite() {
   ctx.imageSmoothingEnabled = false;
   ctx.clearRect(0, 0, c.width, c.height);
   const spr = getEnemySprite(en.season, en.isBoss, en.isFinal);
-  ctx.drawImage(spr, 0, 0, 128, 128);
+  ctx.drawImage(spr, 0, 0, c.width, c.height);
 }
 
-function setBattleEnemySpeech(txt) {
-  document.getElementById('btlSpeech').textContent = txt;
+function setBattleEnemySpeech(text) {
+  const el = document.getElementById('btlSpeech');
+  if (el) el.textContent = text;
 }
 
 function setUtButtonsDisabled(disabled) {
   ['utBtnFight', 'utBtnSkill', 'utBtnItem', 'utBtnFlee'].forEach(id => {
-    document.getElementById(id).disabled = disabled;
+    const btn = document.getElementById(id);
+    if (btn) btn.disabled = disabled;
   });
 }
 
@@ -3101,33 +3118,56 @@ function battleSelectMainIndex(idx, execute = false) {
   const b = STATE.battle;
   if (!b.active || b.turn !== 'player') return;
   b.menuIndex = ((idx % 4) + 4) % 4;
-  b.subMenuActive = false;
-
   const btnIds = ['utBtnFight', 'utBtnSkill', 'utBtnItem', 'utBtnFlee'];
   btnIds.forEach((id, i) => {
-    const el = document.getElementById(id);
+    const btn = document.getElementById(id);
     const cur = document.getElementById(`utCursor${i}`);
-    const isSel = i === b.menuIndex;
-    el.classList.toggle('selected', isSel);
-    if (cur) cur.style.visibility = isSel ? 'visible' : 'hidden';
+    if (btn) btn.classList.toggle('selected', i === b.menuIndex);
+    if (cur) cur.style.visibility = i === b.menuIndex ? 'visible' : 'hidden';
   });
-
-  AUDIO.play('blip');
-
-  if (execute) {
-    if (b.menuIndex === 0) battleSelectFight();
-    else if (b.menuIndex === 1) battleSelectSkill();
-    else if (b.menuIndex === 2) battleSelectItem();
-    else if (b.menuIndex === 3) battleSelectFlee();
+  if (!execute) {
+    AUDIO.play('blip');
+    return;
   }
+  if (b.menuIndex === 0) battleSelectFight(null);
+  else if (b.menuIndex === 1) battleSelectSkill();
+  else if (b.menuIndex === 2) battleSelectItem();
+  else if (b.menuIndex === 3) battleSelectFlee();
 }
 
 function renderSubMenuSelection() {
   const b = STATE.battle;
   const btns = document.querySelectorAll('#utSubMenuGrid .ut-choice-btn');
-  btns.forEach((btn, i) => {
-    btn.classList.toggle('selected', i === b.subMenuIndex);
+  btns.forEach((btn, idx) => {
+    btn.classList.toggle('selected', idx === b.subMenuIndex);
   });
+}
+
+function getBattleBoxSize(boxMode) {
+  const isCompactLandscape = window.innerHeight < 520;
+  if (boxMode === 'menu') {
+    return {
+      w: Math.min(660, Math.floor(window.innerWidth * 0.94)),
+      h: isCompactLandscape ? 132 : 225
+    };
+  }
+  if (boxMode === 'timing') {
+    return {
+      w: Math.min(580, Math.floor(window.innerWidth * 0.92)),
+      h: isCompactLandscape ? 132 : 195
+    };
+  }
+  // 'bullet': Undertale 經典正方形/近似正方形彈幕閃避框
+  const isBoss = STATE.battle.enemy && STATE.battle.enemy.isBoss;
+  if (isCompactLandscape) {
+    const bh = Math.max(148, Math.min(195, window.innerHeight - 195));
+    const bw = Math.round(bh * 1.12);
+    return { w: bw, h: bh };
+  }
+  return {
+    w: isBoss ? 290 : 250,
+    h: isBoss ? 250 : 220
+  };
 }
 
 function enterPlayerBattleTurn(promptMsg = '* 輪到你的回合！請用 [← / →] 或 [A / D] 選擇行動，按 [Space] 確認。') {
@@ -3137,10 +3177,10 @@ function enterPlayerBattleTurn(promptMsg = '* 輪到你的回合！請用 [← /
   b.subMenuIndex = 0;
   b.subMenuItems = [];
 
-  const isMobileLandscape = STATE.deviceMode === 'mobile' && window.innerHeight < 520;
+  const dim = getBattleBoxSize('menu');
   const box = document.getElementById('utBoxContainer');
-  box.style.width = '660px';
-  box.style.height = isMobileLandscape ? '145px' : '225px';
+  box.style.width = `${dim.w}px`;
+  box.style.height = `${dim.h}px`;
   document.getElementById('utTextBox').style.display = 'flex';
   document.getElementById('battleCanvas').style.display = 'none';
   document.getElementById('utPromptText').textContent = promptMsg;
@@ -3161,12 +3201,16 @@ function battleSelectFight(skillObj = null) {
   b.timingSkill = skillObj;
   setUtButtonsDisabled(true);
 
-  const isMobileLandscape = STATE.deviceMode === 'mobile' && window.innerHeight < 520;
+  const dim = getBattleBoxSize('timing');
+  const box = document.getElementById('utBoxContainer');
+  box.style.width = `${dim.w}px`;
+  box.style.height = `${dim.h}px`;
+
   document.getElementById('utTextBox').style.display = 'none';
   const bc = document.getElementById('battleCanvas');
   bc.style.display = 'block';
-  bc.width = Math.min(650, Math.floor(window.innerWidth * 0.9));
-  bc.height = isMobileLandscape ? 140 : 210;
+  bc.width = dim.w - 10;
+  bc.height = dim.h - 10;
   AUDIO.play('blip');
 }
 
@@ -3246,6 +3290,14 @@ function battleSelectSkill() {
     btn.onclick = execFn;
     grid.appendChild(btn);
   });
+
+  const backFn = () => enterPlayerBattleTurn();
+  b.subMenuItems.push(backFn);
+  const backBtn = document.createElement('button');
+  backBtn.className = 'ut-choice-btn';
+  backBtn.innerHTML = `<span>↩</span><div style="color:#94a3b8;">返回主選單</div>`;
+  backBtn.onclick = backFn;
+  grid.appendChild(backBtn);
 }
 
 // 3) 選擇【道具 ITEM】
@@ -3258,8 +3310,10 @@ function battleSelectItem() {
 
   const consumables = Object.entries(STATE.inventory).filter(([id, cnt]) => cnt > 0 && ITEMS[id]?.type === 'consumable');
   if (consumables.length === 0) {
-    b.subMenuActive = false;
-    grid.innerHTML = '<div style="color:#94a3b8; font-size:13px;">背包裡沒有可用的消耗品！</div>';
+    b.subMenuActive = true;
+    b.subMenuIndex = 0;
+    b.subMenuItems = [() => enterPlayerBattleTurn()];
+    grid.innerHTML = '<div style="color:#94a3b8; font-size:13px;">背包裡沒有可用的消耗品！</div><button class="ut-choice-btn selected" onclick="enterPlayerBattleTurn()"><span>↩</span><div>返回主選單</div></button>';
     return;
   }
 
@@ -3282,6 +3336,14 @@ function battleSelectItem() {
     btn.onclick = execFn;
     grid.appendChild(btn);
   });
+
+  const backFn = () => enterPlayerBattleTurn();
+  b.subMenuItems.push(backFn);
+  const backBtn = document.createElement('button');
+  backBtn.className = 'ut-choice-btn';
+  backBtn.innerHTML = `<span>↩</span><div style="color:#94a3b8;">返回主選單</div>`;
+  backBtn.onclick = backFn;
+  grid.appendChild(backBtn);
 }
 
 // 4) 選擇【逃跑 FLEE】
@@ -3329,25 +3391,26 @@ function startEnemyBulletTurn(bannerText) {
   b.subMenuActive = false;
   b.bulletTimer = 0;
   b.bulletDuration = b.enemy.isBoss ? 7.2 : 5.2;
+  b.patternType = (b.patternType + 1) % 5;
   b.patternTick = 0;
   b.bullets = [];
   b.lasers = [];
-  const isMobileLandscape = STATE.deviceMode === 'mobile' && window.innerHeight < 520;
+
+  const dim = getBattleBoxSize('bullet');
   const box = document.getElementById('utBoxContainer');
-  const maxW = Math.floor(window.innerWidth * 0.9);
-  const bw = Math.min(maxW, b.enemy.isBoss ? 440 : 340);
-  const bh = isMobileLandscape ? 142 : (b.enemy.isBoss ? 225 : 185);
-  box.style.width = `${bw}px`;
-  box.style.height = `${bh}px`;
+  box.style.width = `${dim.w}px`;
+  box.style.height = `${dim.h}px`;
 
   document.getElementById('utTextBox').style.display = 'none';
   const bc = document.getElementById('battleCanvas');
   bc.style.display = 'block';
-  bc.width = bw;
-  bc.height = bh;
+  const cw = dim.w - 10;
+  const ch = dim.h - 10;
+  bc.width = cw;
+  bc.height = ch;
 
-  b.soul.x = bw / 2;
-  b.soul.y = bh / 2;
+  b.soul.x = cw / 2;
+  b.soul.y = ch / 2;
   b.soul.invuln = 0.6;
 
   setBattleEnemySpeech(bannerText + ' （閃避彈幕！）');
@@ -3363,10 +3426,10 @@ function startEnemyDissolve() {
   b.dissolveParticles = [];
   setUtButtonsDisabled(true);
 
-  const isMobileLandscape = STATE.deviceMode === 'mobile' && window.innerHeight < 520;
+  const dim = getBattleBoxSize('menu');
   const box = document.getElementById('utBoxContainer');
-  box.style.width = '660px';
-  box.style.height = isMobileLandscape ? '145px' : '225px';
+  box.style.width = `${dim.w}px`;
+  box.style.height = `${dim.h}px`;
   document.getElementById('utTextBox').style.display = 'flex';
   document.getElementById('battleCanvas').style.display = 'none';
   document.getElementById('utPromptText').textContent = `* 【${b.enemy.name}】正在化作光塵消散……`;
@@ -3700,24 +3763,36 @@ function renderBattleCanvas() {
   ctx.fillRect(0, 0, w, h);
 
   if (b.turn === 'timing') {
+    const padX = Math.max(18, Math.round(w * 0.05));
+    const innerW = w - padX * 2;
+    const barTop = Math.round(h * 0.16);
+    const barH = Math.round(h * 0.56);
+
     ctx.strokeStyle = '#475569';
     ctx.lineWidth = 3;
-    ctx.strokeRect(24, 42, w - 48, 108);
+    ctx.strokeRect(padX, barTop, innerW, barH);
+
+    // 經典 Undertale 橢圓準星裝飾線
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.25)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(w / 2, barTop + barH / 2, innerW * 0.46, barH * 0.44, 0, 0, Math.PI * 2);
+    ctx.stroke();
 
     const cx = w / 2;
-    ctx.fillStyle = 'rgba(34, 197, 94, 0.28)';
-    ctx.fillRect(cx - (w - 48) * 0.18, 45, (w - 48) * 0.36, 102);
-    ctx.fillStyle = 'rgba(250, 204, 21, 0.55)';
-    ctx.fillRect(cx - (w - 48) * 0.06, 45, (w - 48) * 0.12, 102);
+    ctx.fillStyle = 'rgba(34, 197, 94, 0.32)';
+    ctx.fillRect(cx - innerW * 0.18, barTop + 2, innerW * 0.36, barH - 4);
+    ctx.fillStyle = 'rgba(250, 204, 21, 0.62)';
+    ctx.fillRect(cx - innerW * 0.06, barTop + 2, innerW * 0.12, barH - 4);
 
-    const barX = 24 + b.timingPos * (w - 48);
+    const barX = padX + b.timingPos * innerW;
     ctx.fillStyle = '#fff';
-    ctx.fillRect(barX - 4, 35, 8, 122);
+    ctx.fillRect(barX - 4, barTop - 5, 8, barH + 10);
 
     ctx.fillStyle = '#facc15';
-    ctx.font = 'bold 13px monospace';
+    ctx.font = `bold ${h < 140 ? 11 : 13}px monospace`;
     ctx.textAlign = 'center';
-    ctx.fillText('按下 [Space / Enter] 或 [點擊畫面] 鎖定暴擊！', w / 2, 182);
+    ctx.fillText('按下 [Space / Enter] 或 [攻擊確認鍵] 鎖定暴擊！', w / 2, Math.min(h - 8, barTop + barH + 22));
   } else if (b.turn === 'enemy_bullet') {
     b.lasers.forEach(lz => {
       if (lz.warnTimer > 0) {
@@ -3772,6 +3847,7 @@ function renderBattleCanvas() {
 
 function closeBattleOverlay() {
   STATE.battle.active = false;
+  document.body.classList.remove('in-battle');
   document.getElementById('battleOverlay').style.display = 'none';
 }
 
@@ -3808,37 +3884,45 @@ function gainXp(amount, silent = false) {
       addToast(`⭐ 升級了！當前等級 Lv.${p.level}，生命與藍條已完全恢復！`);
     }
   }
+  updateQuestTrackerUI();
 }
 
 /* ============================================================================
-   12. 任務追蹤與主循環更新
+   12. 任務進度與主線推進檢查
    ============================================================================ */
 function checkQuestProgress() {
+  const p = STATE.player;
   const s = STATE.quests.stats;
-  s.goldPeak = Math.max(s.goldPeak || 0, STATE.player.gold);
+  s.goldPeak = Math.max(s.goldPeak || 0, p.gold);
 
   const mq = MAIN_QUESTS[STATE.quests.mainIdx];
   if (mq) {
-    let done = false;
-    if (mq.type === 'combo_init' && s.chestsOpened >= 2 && s.totalKills >= 1) done = true;
-    if (mq.type === 'have_item' && (STATE.inventory[mq.item] || 0) >= mq.target) done = true;
-    if (mq.type === 'kill_final' && STATE.entities.finalBoss && STATE.entities.finalBoss.dead) done = true;
-
-    if (done) {
-      STATE.player.gold += mq.rewardGold;
-      gainXp(mq.rewardXp);
-      addToast(`🏆 完成主線任務：【${mq.title}】！獲得 ${mq.rewardGold} G！`);
-      if (STATE.quests.mainIdx < MAIN_QUESTS.length - 1) STATE.quests.mainIdx++;
+    let completed = false;
+    if (mq.type === 'combo_init') {
+      completed = s.chestsOpened >= 2 && s.totalKills >= 1;
+    } else if (mq.type === 'have_item') {
+      completed = !!STATE.inventory[mq.item];
+    } else if (mq.type === 'kill_final') {
+      completed = !!(STATE.entities.finalBoss && STATE.entities.finalBoss.dead);
+    }
+    if (completed) {
+      p.gold += mq.rewardGold;
+      gainXp(mq.rewardXp, true);
+      STATE.quests.mainIdx++;
+      AUDIO.play('levelup');
+      addToast(`🎉 完成主線任務：【${mq.title}】！獲得 ${mq.rewardGold} G！`);
     }
   }
 
   SIDE_QUESTS.forEach(sq => {
     if (STATE.quests.completedSide[sq.id]) return;
-    if ((s[sq.statKey] || 0) >= sq.target) {
+    const cur = s[sq.statKey] || 0;
+    if (cur >= sq.target) {
       STATE.quests.completedSide[sq.id] = true;
-      STATE.player.gold += sq.rewardGold;
-      gainXp(sq.rewardXp);
-      addToast(`✅ 完成支線委託：【${sq.title}】！獎勵 ${sq.rewardGold} G！`);
+      p.gold += sq.rewardGold;
+      gainXp(sq.rewardXp, true);
+      AUDIO.play('chest');
+      addToast(`🏅 完成支線委託：【${sq.title}】！獎勵 ${sq.rewardGold} G！`);
     }
   });
 
@@ -5089,10 +5173,40 @@ gameCanvas.addEventListener('mousedown', e => {
 });
 gameCanvas.addEventListener('contextmenu', e => e.preventDefault());
 
-document.getElementById('battleCanvas').addEventListener('mousedown', () => {
+const battleCanvasEl = document.getElementById('battleCanvas');
+battleCanvasEl.addEventListener('mousedown', () => {
   if (STATE.battle.active && STATE.battle.turn === 'timing') {
     confirmTimingAttack();
   }
+});
+
+let btlLastTouch = null;
+battleCanvasEl.addEventListener('touchstart', e => {
+  if (!STATE.battle.active) return;
+  e.preventDefault();
+  if (STATE.battle.turn === 'timing') {
+    confirmTimingAttack();
+    return;
+  }
+  if (STATE.battle.turn === 'enemy_bullet' && e.touches.length > 0) {
+    btlLastTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }
+}, { passive: false });
+
+battleCanvasEl.addEventListener('touchmove', e => {
+  if (!STATE.battle.active || STATE.battle.turn !== 'enemy_bullet' || !btlLastTouch || e.touches.length === 0) return;
+  e.preventDefault();
+  const t = e.touches[0];
+  const dx = t.clientX - btlLastTouch.x;
+  const dy = t.clientY - btlLastTouch.y;
+  btlLastTouch = { x: t.clientX, y: t.clientY };
+  const b = STATE.battle;
+  b.soul.x = Math.max(12, Math.min(battleCanvasEl.width - 12, b.soul.x + dx));
+  b.soul.y = Math.max(12, Math.min(battleCanvasEl.height - 12, b.soul.y + dy));
+}, { passive: false });
+
+battleCanvasEl.addEventListener('touchend', () => {
+  btlLastTouch = null;
 });
 
 document.getElementById('minimapCanvas').addEventListener('click', e => {
